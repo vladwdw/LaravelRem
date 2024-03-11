@@ -16,10 +16,11 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('password');
             $table->string('full_name');
-            $table->string('position');
+            $table->enum('position', ['директор', 'сотрудник','мастер-ремонтник'])->default('сотрудник');
             $table->rememberToken();
             $table->timestamps();
         });
+        
     }
 
     /**

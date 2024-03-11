@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Inventory extends Model
 {
     use HasFactory;
-    public function cabinet(){
-        return $this->hasOne(Cabinet::class);
+    public function cabinet()
+    {
+        return $this->belongsTo(Cabinet::class);
     }
 }

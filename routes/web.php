@@ -21,3 +21,8 @@ Route::get('/cabinet', function () {
     return view('cabinet');
 });
 
+
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

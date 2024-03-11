@@ -1,0 +1,52 @@
+/* Светлая тема */
+.page-link {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Standard syntax */
+}
+:root {
+    --pagination-text-color: #000;
+    --pagination-hover-color: #ddd;
+    --pagination-active-color: #007bff;
+   }
+   
+   /* Темная тема */
+   .dark {
+    --pagination-text-color: #fff;
+    --pagination-hover-color: #555;
+    --pagination-active-color: #007bff;
+   }
+   
+   .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    gap: 8px;
+
+   }
+   
+   
+   .page-link {
+    cursor: pointer;
+    padding: 5px 10px;
+    color: var(--pagination-text-color);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+   }
+   
+   .page-link:hover {
+    background-color: var(--pagination-hover-color);
+   }
+   
+   .active .page-link {
+    background-color: var(--pagination-active-color);
+    color: white;
+   }
+   
+   .disabled .page-link {
+    color: #6c757d;
+    cursor: not-allowed;
+   }

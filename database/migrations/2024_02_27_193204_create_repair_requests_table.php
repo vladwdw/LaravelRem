@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('repair_requests', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('repairInv_id')->nullable();
-            $table->foreign('repairInv_id')
-            ->references('id')->on('repair_inventories')
+            $table->unsignedBigInteger('inv_id')->nullable();
+            $table->foreign('inv_id')
+            ->references('id')->on('inventories')
             ->onDelete('cascade'); 
             $table->unsignedBigInteger('cabinet_id')->nullable();
             $table->foreign('cabinet_id')
