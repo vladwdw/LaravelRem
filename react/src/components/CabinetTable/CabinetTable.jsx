@@ -1,81 +1,86 @@
 import axios from 'axios';
 import UserPagination from '../UserTable/UserPagination';
 import TableItem from './TableItem';
-import ActionsDropdown from './ActionsDropdown';
 import React, { useState, useEffect } from 'react';
-const  CabinetTable = () => {
 
+const CabinetTable = ({ searchValue }) => {
     const [data, setData] = useState([]);
     const [pagination, setPagination] = useState({});
-    const [cabinets, setCabinets] = useState(data);
-    const handleDelete = (id) => {
-        const updatedCabinets = cabinets.filter(cabinets => cabinets.id !== id);
-        setCabinets(updatedCabinets);
-     };
+    const [filteredData, setFilteredData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 2; // Adjust this value based on your requirements
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://remont.by/api/cabinets');
-                setCabinets(response.data.data); // Обновляем данные
-                setPagination(response.data); // Сохраняем метаданные пагинации
+                setData(response.data.data);
+                setPagination(response.data);
+                filterData(response.data.data);
             } catch (error) {
                 console.error('Произошла ошибка при получении данных:', error);
             }
         };
-    
+
         fetchData();
     }, []);
 
-    const changePage = async (page) => {
-        try {
-            const response = await axios.get(`http://remont.by/api/cabinets?page=${page}`);
-            setCabinets(response.data.data); // Обновляем данные
-            setPagination(response.data); // Сохраняем метаданные пагинации
-        } catch (error) {
-            console.error('Произошла ошибка при получении данных:', error);
-        }
+    const filterData = (data) => {
+        const filtered = data.filter((cabinet) =>
+            searchValue.toLowerCase() === '' ||
+            cabinet.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+            cabinet.id.toString().includes(searchValue.toLowerCase())
+        );
+        setFilteredData(filtered);
+        setCurrentPage(1); // Reset to the first page after filtering
     };
-   
 
-    return ( 
+    useEffect(() => {
+        filterData(data);
+    }, [searchValue, data]);
+
+    const changePage = (page) => {
+        setCurrentPage(page);
+    };
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+
+    const handleDelete = (id) => {
+        const updatedCabinets = filteredData.filter(cabinet => cabinet.id !== id);
+        setFilteredData(updatedCabinets);
+    };
+
+    return (
         <>
-<div className="flex  overflow-x-auto shadow-md sm:rounded-lg">
-    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-                <th scope="col" class="p-4">
-                    <div class="flex items-center">
+            <div className="flex overflow-x-auto shadow-md sm:rounded-lg">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="p-4">
+                                <div class="flex items-center"></div>
+                            </th>
+                            <th scope="col" class="px-6 py-3">Номер кабинета</th>
+                            <th scope="col" class="px-6 py-3">Наименование</th>
+                            <th scope="col" class="px-6 py-3">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentItems.map((cabinet, index) => (
+                            <TableItem key={cabinet.id} cabinet={cabinet} onDelete={handleDelete} />
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
-                    </div>
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Номер кабинета
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Наименование
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Действия
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-        {cabinets.map((cabinet, index) => (
-            <TableItem key={cabinet.id} cabinet={cabinet} onDelete={handleDelete}></TableItem>
-        ))}
+            <UserPagination
+                currentPage={currentPage}
+                lastPage={Math.ceil(filteredData.length / itemsPerPage)}
+                onChangePage={changePage}
+            />
+        </>
+    );
+};
 
-
-        </tbody>
-    </table>
-
-</div>
-<UserPagination 
-    currentPage={pagination.current_page}
-    lastPage={pagination.last_page}
-    onChangePage={changePage}
-    
-/>
-</> );
-}
- 
 export default CabinetTable;

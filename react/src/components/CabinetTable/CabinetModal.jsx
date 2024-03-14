@@ -13,7 +13,7 @@ const CabinetModal = ({ isOpen, onClose, cabinet }) => {
             });
             
             console.log(response.data);
-            window.location.reload(); 
+   
         } catch (error) {
             console.error('Error updating cabinet:', error);
         }

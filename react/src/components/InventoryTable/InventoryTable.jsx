@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ActionsDropdown from './ActionsDropdown';
-import { TabItem } from 'flowbite-react';
 import UserPagination from '../UserTable/UserPagination';
 import TableItem from './TableItem';
 import '../../App.css';
 
 const InventoryTable = ({ searchValue }) => {
-    const itemsPerPage = 2;
+    const itemsPerPage = 3;
     const [pagination, setPagination] = useState({
         current_page: 1,
         last_page: 1,
     });
-    const [cabinets, setCabinets] = useState([]);
     const [data, setData] = useState([]);
-    const [inventory, setInventory] = useState([]);
-    const [filteredInventory, setFilteredInventory] = useState([]); // New state for filtered inventory
+    const [filteredInventory, setFilteredInventory] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     useEffect(() => {
-        loadInventories(); // Load all data when the component mounts
+        loadInventories(1); // Load data when the component mounts
     }, []);
 
     useEffect(() => {
@@ -40,15 +36,13 @@ const InventoryTable = ({ searchValue }) => {
         setFilteredInventory(updateInventories); // Update the filtered inventory state
     };
 
-    const loadInventories = async () => {
+    const loadInventories = async (page) => {
         try {
-            const response = await axios.get(`http://remont.by/api/inventories`);
+            const response = await axios.get(`http://remont.by/api/inventories?page=${page}`);
             setData(response.data.data);
-            setInventory(response.data.data);
-            setFilteredInventory(response.data.data); // Initialize filteredInventory with the loaded data
             setPagination({
-                current_page: 1,
-                last_page: Math.ceil(response.data.data.length / itemsPerPage),
+                current_page: response.data.meta.current_page || 1,
+                last_page: response.data.meta.last_page || 1,
             });
         } catch (error) {
             console.error('Ошибка при загрузке данных:', error);
@@ -57,7 +51,7 @@ const InventoryTable = ({ searchValue }) => {
 
     useEffect(() => {
         const sortedData = sortData(filteredInventory, sortConfig); // Sort the filtered inventory
-        setInventory(sortedData);
+        setFilteredInventory(sortedData);
     }, [filteredInventory, sortConfig]);
 
     const sortData = (data, config) => {
@@ -89,12 +83,10 @@ const InventoryTable = ({ searchValue }) => {
     const changePage = (page) => {
         const startIndex = (page - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        const paginatedData = inventory.slice(startIndex, endIndex);
-        setInventory(paginatedData);
-        setPagination(prevState => ({
-            ...prevState,
-            current_page: page,
-        }));
+    
+        const sortedData = sortData(filteredInventory, sortConfig); // Sort the filtered inventory
+        loadInventories(page);
+        setFilteredInventory(sortedData.slice(startIndex, endIndex)); // Use setFilteredInventory instead of setInventory
     };
 
     return (
@@ -129,9 +121,9 @@ const InventoryTable = ({ searchValue }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {Array.isArray(data) ? (
-                            inventory.map((inventory, index) => (
-                                <TableItem inventory={inventory} onDelete={handleDelete} cabinet={cabinets} />
+                        {Array.isArray(filteredInventory) ? (
+                            filteredInventory.map((inventory, index) => (
+                                <TableItem inventory={inventory} onDelete={handleDelete} />
                             ))
                         ) : (
                              <h1>Loading...</h1> // Placeholder UI while data is loading
@@ -146,6 +138,6 @@ const InventoryTable = ({ searchValue }) => {
             />
         </>
     );
-}
+};
+
 export default InventoryTable;
-            

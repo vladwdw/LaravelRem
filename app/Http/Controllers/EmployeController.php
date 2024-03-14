@@ -9,7 +9,7 @@ class EmployeController extends Controller
 {
     public function index()
 {
-    $employes = Employe::paginate(10); // Используйте Eloquent ORM для получения всех записей
+    $employes = Employe::paginate(); // Используйте Eloquent ORM для получения всех записей
     return response()->json($employes); // Возвращаем данные в формате JSON
 }
     public function delete($id){

@@ -23,11 +23,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('/employes',[EmployeController::class, 'index']);
 Route::get('/cabinets',[CabinetController::class, 'index']);
+Route::put('/cabinet/{id}',[CabinetController::class, 'update']);
 Route::get('/inventories',[InventoriesController::class, 'index']);
+Route::put('/inventory/{id}',[InventoriesController::class, 'update']);
+Route::post('/inventory',[InventoriesController::class, 'create']);
 Route::delete('/employes/delete/{id}',[EmployeController::class,'delete']);
 Route::get('/employes/get/{id}',[EmployeController::class,'get']);
 Route::put('/employee/{id}', [EmployeController::class,'update']);
 Route::post('/employee/create', [EmployeController::class,'create']);
+Route::post('/cabinet', [CabinetController::class,'create']);
 Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
     
     return response()->json([

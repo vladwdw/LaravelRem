@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import CabinetModal from "./CabinetModal";
 const ActionsDropdown = ({isVisible,cabinet,onDelete}) => {
     const[stateModal,setModal]=useState(false);
     const deleteEmployee = async (id) => {
@@ -41,6 +42,7 @@ const ActionsDropdown = ({isVisible,cabinet,onDelete}) => {
                         <li><a href="#" onClick={openModal} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Редактировать</a></li>
                
                     </ul>
+                    <CabinetModal isOpen={stateModal} onClose={openModal} cabinet={cabinet}></CabinetModal>
                 </div>
                
             ): null}
