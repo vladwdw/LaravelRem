@@ -12,4 +12,7 @@ class Inventory extends Model
     {
         return $this->belongsTo(Cabinet::class);
     }
+    public function repairRequests(){
+        return $this->hasMany(RepairRequest::class);
+    }
 }

@@ -8,16 +8,28 @@ use Illuminate\Database\Eloquent\Model;
 class RepairRequest extends Model
 {
     use HasFactory;
-    public function cabinet(){
-        return $this->hasOne(Cabinet::class);
+    public function employe()
+    {
+        return $this->belongsTo(Employe::class)->withDefault([
+            'full_name' => 'Не указано',
+        ]);
     }
-    public function employe(){
-        return $this->hasOne(Employe::class);
+    
+    public function employeRecieved()
+    {
+        return $this->belongsTo(Employe::class)->withDefault([
+            'full_name' => 'Не указано',
+        ]);
     }
-    public function employeRecieved(){
-        return $this->hasOne(Employe::class);
+    
+    public function inventory()
+    {
+        return $this->belongsTo(Inventory::class);
     }
-    public function inventoryRepairs(){
-        return $this->hasOne(repairInventory::class);
-    }
+    public function cabinet()
+{
+    return $this->belongsTo(Cabinet::class)->withDefault([
+        'name' => 'Не указано',
+    ]);
+}
 }

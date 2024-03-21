@@ -17,23 +17,7 @@ class EmployeController extends Controller
         $employ->delete();
         return response()->json('Пользователь был удален');
     }
-    public function authenticate(Request $request)
-    {
-        $credentials = $request->validate([
-            'username' => ['required'],
-            'password' => ['required'],
-        ]);
-    
-        if (Auth::guard('employe')->attempt($credentials)) {
-            $request->session()->regenerate();
-    
-            return redirect()->intended('dashboard');
-        }
-    
-        return back()->withErrors([
-            'username' => 'The provided credentials do not match our records.',
-        ]);
-    }
+
     public function get($id){
         $employe=Employe::find($id);
         return response()->json([
@@ -80,12 +64,7 @@ class EmployeController extends Controller
     }
     public function create(Request $request){
         try{
-            $validatedData = $request->validate([
-                'username' => 'required|unique:employes,username',
-                'password' => 'required',
-                'full_name' => 'required',
-                'position' => 'required',
-            ]);
+            $validatedData = $request->toArray();
         }
         catch(\Exception $e){
                 return response()->json(['message' => 'Не прошла валидация'], 422);
@@ -102,7 +81,7 @@ try
             return response()->json(['message' => 'Employee created successfully', 'employee' => $validatedData]);
 }
         catch(\Exception $e){
-            return response()->json(['message' => 'Internal server error'], 500);
+            return response()->json(['message' => 'Internal server error',$e->getMessage()], 500);
         }
     }
 

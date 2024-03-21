@@ -30,7 +30,7 @@ return new class extends Migration
             $table->foreign('recieve_id')
             ->references('id')->on('employes'); 
             $table->text('problemDescription');
-            $table->enum('status', ['Выполнен', 'Отклонен', 'На обработке', 'В ожидании'])->default('В ожидании');
+            $table->enum('status', ['Выполнен', 'Отклонен', 'На обработке', 'В ожидании', 'Подтверждение'])->default('В ожидании');
 
         });
     }

@@ -8,7 +8,7 @@ const CabinetTable = ({ searchValue }) => {
     const [pagination, setPagination] = useState({});
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 2; // Adjust this value based on your requirements
+    const itemsPerPage = 10; // Adjust this value based on your requirements
 
     useEffect(() => {
         const fetchData = async () => {

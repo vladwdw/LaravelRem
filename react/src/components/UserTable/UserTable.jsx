@@ -9,14 +9,14 @@ const UserTable = ({searchValue}) => {
     const [pagination, setPagination] = useState({});
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5; // Adjust this value based on your requirements
+    const itemsPerPage = 10; // Adjust this value based on your requirements
 
 
 
 
     const handleDelete = (id) => {
-        const updatedUsers = users.filter(user => user.id !== id);
-        setUsers(updatedUsers);
+        const updatedUsers = data.filter(user => user.id !== id);
+        setFilteredData(updatedUsers);
      };
 
 

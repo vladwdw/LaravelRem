@@ -11,6 +11,7 @@ class Cabinet extends Model
     public function inventories(){
         return $this->hasMany(Inventory::class);
     }
+
     public function repairInventories(){
         return $this->hasMany(repairInventory::class);
     }

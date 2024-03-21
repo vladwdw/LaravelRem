@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\RequestsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CabinetController;
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmployeController;
 use App\Http\Controllers\InventoriesController;
+use App\Models\RepairRequest;
 use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
@@ -22,22 +25,23 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('/employes',[EmployeController::class, 'index']);
+Route::get('/requests',[RequestsController::class, 'index']);
 Route::get('/cabinets',[CabinetController::class, 'index']);
-Route::put('/cabinet/{id}',[CabinetController::class, 'update']);
-Route::get('/inventories',[InventoriesController::class, 'index']);
-Route::put('/inventory/{id}',[InventoriesController::class, 'update']);
-Route::post('/inventory',[InventoriesController::class, 'create']);
-Route::delete('/employes/delete/{id}',[EmployeController::class,'delete']);
 Route::get('/employes/get/{id}',[EmployeController::class,'get']);
+Route::get('/inventories',[InventoriesController::class, 'index']);
+
+Route::put('/cabinet/{id}',[CabinetController::class, 'update']);
+Route::put('/inventory/{id}',[InventoriesController::class, 'update']);
 Route::put('/employee/{id}', [EmployeController::class,'update']);
-Route::post('/employee/create', [EmployeController::class,'create']);
-Route::post('/cabinet', [CabinetController::class,'create']);
-Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
-    
-    return response()->json([
-        'data' => 'hh',
-    ]);
-});
+
+Route::delete('/inventory/{id}',[InventoriesController::class, 'delete']);
+Route::delete('/employes/delete/{id}',[EmployeController::class,'delete']);
 Route::delete('/cabinet/{id}',[CabinetController::class,'delete']);
+Route::delete('/request/{id}',[RequestsController::class, 'delete']);
+
+Route::post('/employee/create', [EmployeController::class,'create']);
+Route::post('/loginEmploye', [AuthController::class, 'login']);
+Route::post('/cabinet', [CabinetController::class,'create']);
+Route::post('/inventory',[InventoriesController::class, 'create']);
 
 Auth::routes();

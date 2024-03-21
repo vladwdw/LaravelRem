@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Helmet } from "react-helmet";
 const AddUserModal = ({ isOpen, onClose}) => {
-    const [position, setPosition] = useState();
+    const [position, setPosition] = useState('директор');
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
     const [full_name, setFull_name] = useState();

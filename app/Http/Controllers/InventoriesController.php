@@ -82,4 +82,15 @@ class InventoriesController extends Controller
             return response()->json(['message' => 'Internal server error'], 500);
         }
     }
+    public function delete($id){
+        try{
+        $inventory=Inventory::find($id);
+        $inventory->delete();
+        return response()->json('Инвентарь был удален');
+        }
+        catch(\Exception $e){
+        return response()->json(['message'=>'Internal server error'],500);
+        }
+    }
+    
 }

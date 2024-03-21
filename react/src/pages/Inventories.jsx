@@ -1,3 +1,4 @@
+import Footer from "../components/UserTable/Footer";
 import AddInventoryModal from "../components/InventoryTable/AddInventoryModal";
 import InventoryTable from "../components/InventoryTable/InventoryTable";
 import NavMenu from "../components/NavMenu";
@@ -16,7 +17,7 @@ const Inventories = () => {
     return ( 
         <html class="dark">
         <NavMenu></NavMenu>
-        <body class="dark:bg-slate-950">
+        <body class="container max-w-[1920px] height-[100%] mx-auto dark:bg-slate-950">
         <div class="items-center justify-center mx-auto h-screen md:lg:py-0">
 <div class="pt-5 px-[5rem]">
 <div className="flex flex-row">
@@ -37,6 +38,7 @@ const Inventories = () => {
 <AddInventoryModal  isOpen={isOpen} onClose={openModal}></AddInventoryModal>
 
     </div> 
+    <Footer></Footer>
     </div>
         </body>
 

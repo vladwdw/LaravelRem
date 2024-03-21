@@ -15,9 +15,11 @@ class Employe extends Authenticatable
     protected $fillable = [
         'username',
         'password',
-        'position',
     ];
     protected $hidden = [
         'password',
     ];
+    public function repairRequests(){
+        return $this->hasMany(RepairRequest::class);
+    }
 }

@@ -2,26 +2,43 @@ import { Navbar } from "flowbite-react";
 import NavMenu from "../components/NavMenu";
 import { useState } from "react";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+    const navigate = useNavigate(); 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
     const [errorMessage, setErrorMessage] = useState('');
+ 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://remont.by/api/login', { username, password });
+            const response = await axios.post('http://remont.by/api/loginEmploye', {username, password});
             localStorage.setItem('token', response.data.token);
+            localStorage.setItem('position', response.data.position);
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+            console.log(localStorage.getItem('position'));
+            console.log(localStorage.getItem('token'));
+            localStorage.setItem('auth',true);
+            localStorage.setItem('full_name',response.data.full_name)
+            localStorage.setItem('id',response.data.id)
+
+            // Вызываем метод login из AuthContext с полученным токеном
+            navigate('/users');
+
             // Перенаправление пользователя на главную страницу или другой маршрут
         } catch (error) {
             setErrorMessage('Неверные учетные данные');
+            localStorage.setItem('auth',false);
         }
     };
+
+    
     return ( 
     <html lang="en" class="dark">
-<NavMenu text="Главная" location="/"></NavMenu>
+<NavMenu></NavMenu>
     <body class="dark:bg-slate-950">
         
         <section class=" dark:bg-slate-950">
@@ -40,11 +57,11 @@ const LoginPage = () => {
                         <form class="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                             <div>
                                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Логин</label>
-                                <input type="text" value={username} name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" required="" onChange={(e) => setUsername(e.target.value)}/>
+                                <input type="text" value={username} name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username"  onChange={(e) => setUsername(e.target.value)}/>
                             </div>
                             <div>
                                 <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Пароль</label>
-                                <input type="password" value={password} name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="" onChange={(e) => setPassword(e.target.value)} />
+                                <input type="password" value={password} name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  onChange={(e) => setPassword(e.target.value)} />
                             </div>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-start">

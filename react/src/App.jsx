@@ -8,19 +8,33 @@ import LoginPage from './pages/LoginPage';
 import AllUsers from './pages/AllUsers';
 import Cabinets from './pages/Cabinets';
 import Inventories from './pages/Inventories';
+import ProtectedRoute from './components/ProtectedRoute';
+import DirectorRoute from './components/DirectorRoute';
+import Cabinet from './pages/Cabinet';
+import Requests from './pages/Requests';
+import RequestPage from './components/RequestTable/RequestPage';
+
 function App() {
   const [count, setCount] = useState(0)
-
+  const [authed,setAuthed]=useState(localStorage.getItem('auth')); 
   return (
+    
     <Router>
     <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/login" element={<LoginPage/>} />
-        <Route path="/users" element= {<AllUsers></AllUsers>} />
+        <Route path="/request" element={<RequestPage></RequestPage>}/>
         <Route path="/cabinets" element={<Cabinets></Cabinets>}/>
+        <Route path="/cabinet" element={<Cabinet></Cabinet>}/>
+        <Route path="/requests" element={<Requests></Requests>}/>
         <Route path="/inventories" element={<Inventories></Inventories>}/>
-      </Routes>
-      </Router>
+          <Route path="/login" element={<LoginPage />} />
+          <Route element={<DirectorRoute></DirectorRoute>}>
+            <Route path="/users" element={<AllUsers></AllUsers>}></Route>
+          </Route>
+        <Route path='/users'></Route>
+        </Routes>
+  
+      </Router>  
   )
 }
 

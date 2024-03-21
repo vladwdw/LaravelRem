@@ -3,8 +3,7 @@ import axios from 'axios';
 import UserPagination from '../UserTable/UserPagination';
 import TableItem from './TableItem';
 import '../../App.css';
-
-const InventoryTable = ({ searchValue }) => {
+const RequestTable = ({searchValue}) => {
     const itemsPerPage = 10;
     const [pagination, setPagination] = useState({
         current_page: 1,
@@ -12,14 +11,14 @@ const InventoryTable = ({ searchValue }) => {
     });
     const [currentPage, setCurrentPage] = useState(1);
     const [data, setData] = useState([]);
-    const [filteredInventory, setFilteredInventory] = useState([]);
+    const [filteredRequests, setFilteredRequests] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://remont.by/api/inventories');
+                const response = await axios.get('http://remont.by/api/requests');
                 setData(response.data.data);
                 setPagination(response.data);
                 filterData(response.data.data);
@@ -33,9 +32,9 @@ const InventoryTable = ({ searchValue }) => {
 
 
     useEffect(() => {
-        const sortedData = sortData(filteredInventory, sortConfig); // Sort the filtered inventory
-        setFilteredInventory(sortedData);
-    }, [filteredInventory, sortConfig]);
+        const sortedData = sortData(filteredRequests, sortConfig); // Sort the filtered inventory
+        setFilteredRequests(sortedData);
+    }, [filteredRequests, sortConfig]);
     useEffect(() => {
         filterData(data);
     }, [searchValue, data]);
@@ -70,23 +69,26 @@ const InventoryTable = ({ searchValue }) => {
     };
     const filterData=(data)=>{
         const filtered = data.filter(item => 
-            item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
             item.id.toString().includes(searchValue.toLowerCase()) ||
+            item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
             item.cabinet_name.toLowerCase().includes(searchValue.toLowerCase()) ||
             item.cabinet_id.toString().includes(searchValue.toLowerCase()) ||
-            item.buyDate.includes(searchValue.toLowerCase()) ||
-            item.spisDate.includes(searchValue.toLowerCase())
+            item.inv_id.toString().includes(searchValue.toLowerCase()) ||
+            item.inv_name.includes(searchValue.toLowerCase()) ||
+            item.employe_name.includes(searchValue.toLowerCase()) ||
+            item.employe_received.includes(searchValue.toLowerCase()) ||
+            item.status.includes(searchValue.toLowerCase())
         );
-        setFilteredInventory(filtered);
+        setFilteredRequests(filtered);
     }
 
     const handleDelete = (id) => {
-        const updateInventories = filteredInventory.filter(inventory => inventory.id !== id);
-        setFilteredInventory(updateInventories); // Update the filtered inventory state
+        const updateRequests = filteredRequests.filter(request => request.id !== id);
+        setFilteredRequests(updateRequests); // Update the filtered inventory state
     };
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = filteredInventory.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = filteredRequests.slice(indexOfFirstItem, indexOfLastItem);
 
 
     return (
@@ -101,19 +103,22 @@ const InventoryTable = ({ searchValue }) => {
                                 </div>
                             </th>
                             <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('id')}>
-                                Инвентарный номер
+                                №Заявки
                             </th>
-                            <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('name')}>
-                                Наименование
-                            </th>
-                            <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('buyDate')}>
-                                Дата покупки
-                            </th>
-                            <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('spisDate')}>
-                                Дата списания
+                            <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('inv_id')}>
+                                №_Инвентарь
                             </th>
                             <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('cabinet_id')}>
                                 №_Кабинет
+                            </th>
+                            <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('employe_name')}>
+                                Отправитель
+                            </th>
+                            <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('employe_received')}>
+                                Принял
+                            </th>
+                            <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('status')}>
+                               Статус
                             </th>
                             <th scope="col" class="px-6 py-3 no-select">
                                 Действия
@@ -122,8 +127,8 @@ const InventoryTable = ({ searchValue }) => {
                     </thead>
                     <tbody>
                       {
-                            currentItems.map((inventory, index) => (
-                                <TableItem inventory={inventory} onDelete={handleDelete} />
+                            currentItems.map((request, index) => (
+                                <TableItem request={request} onDelete={handleDelete} />
                             ))
                             }
                     </tbody>
@@ -131,11 +136,11 @@ const InventoryTable = ({ searchValue }) => {
             </div>
             <UserPagination
                 currentPage={currentPage}
-                lastPage={Math.ceil(filteredInventory.length / itemsPerPage)}
+                lastPage={Math.ceil(filteredRequests.length / itemsPerPage)}
                 onChangePage={changePage}
             />
         </>
     );
-};
-
-export default InventoryTable;
+}
+ 
+export default RequestTable;

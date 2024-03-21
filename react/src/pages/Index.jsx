@@ -6,7 +6,7 @@ const Index = () => {
     return ( 
      
 <html class="dark">
-  <NavMenu location="/login"></NavMenu>
+  <NavMenu></NavMenu>
 <body class="container max-w-[1920px] mx-auto dark:bg-slate-800">
           
           <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>

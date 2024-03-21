@@ -6,3 +6,10 @@ html, body {
 .container {
     overflow: auto; /* Позволяет прокрутку, если контент превышает размеры контейнера */
    }
+
+.no-select {
+    user-select: none;
+    -webkit-user-select: none; /* For Safari and Chrome */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For Internet Explorer */
+}
