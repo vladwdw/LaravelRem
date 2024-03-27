@@ -2,14 +2,14 @@ import axios from 'axios';
 import UserPagination from '../UserTable/UserPagination';
 import TableItem from './TableItem';
 import React, { useState, useEffect } from 'react';
-
+import '../../App.css';
 const CabinetTable = ({ searchValue }) => {
     const [data, setData] = useState([]);
     const [pagination, setPagination] = useState({});
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10; // Adjust this value based on your requirements
-
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -42,7 +42,38 @@ const CabinetTable = ({ searchValue }) => {
     const changePage = (page) => {
         setCurrentPage(page);
     };
+    useEffect(() => {
+        const sortedData = sortData(filteredData, sortConfig); // Sort the filtered inventory
+        setFilteredData(sortedData);
+    }, [filteredData, sortConfig]);
+    useEffect(() => {
+        filterData(data);
+    }, [searchValue, data]);
+    const sortData = (data, config) => {
+        if (!config.key) {
+            return data;
+        }
 
+        const sortedData = [...data].sort((a, b) => {
+            if (a[config.key] < b[config.key]) {
+                return config.direction === 'ascending' ? -1 : 1;
+            }
+            if (a[config.key] > b[config.key]) {
+                return config.direction === 'ascending' ? 1 : -1;
+            }
+            return 0;
+        });
+
+        return sortedData;
+    };
+
+    const requestSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -61,9 +92,9 @@ const CabinetTable = ({ searchValue }) => {
                             <th scope="col" class="p-4">
                                 <div class="flex items-center"></div>
                             </th>
-                            <th scope="col" class="px-6 py-3">Номер кабинета</th>
-                            <th scope="col" class="px-6 py-3">Наименование</th>
-                            <th scope="col" class="px-6 py-3">Действия</th>
+                            <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('id')}>Номер кабинета </th>
+                            <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('name')}>Наименование </th>
+                            <th scope="col" class="px-6 py-3 no-select">Действия</th>
                         </tr>
                     </thead>
                     <tbody>

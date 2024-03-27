@@ -22,7 +22,7 @@ function App() {
     <Router>
     <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/request" element={<RequestPage></RequestPage>}/>
+        <Route path="/request/:requestId" element={<RequestPage />} />
         <Route path="/cabinets" element={<Cabinets></Cabinets>}/>
         <Route path="/cabinet" element={<Cabinet></Cabinet>}/>
         <Route path="/requests" element={<Requests></Requests>}/>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import RequestPage from "./RequestPage";
 
 import ActionsDropdown from "./ActionsDropdown";
+import Indicator from "./Indicator";
 const TableItem = ({request,onDelete}) => {
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
@@ -18,9 +19,15 @@ const TableItem = ({request,onDelete}) => {
             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                 {request.id}
             </th>
+            {request.inv_id ? (
             <td className="px-6 py-4">
                 {request.inv_id}_{request.inv_name}
             </td>
+            ):(
+                <td className="px-6 py-4">
+                {request.inventory}
+            </td>
+            )}
             <td className="px-6 py-4">
                 {request.cabinet_id}_{request.cabinet_name}
             </td>
@@ -30,8 +37,8 @@ const TableItem = ({request,onDelete}) => {
             <td className="px-6 py-4">
                 {request.employe_received}
             </td>
-            <td className="px-6 py-4">
-                {request.status}
+            <td className="px-1 py-4">
+                <Indicator type={request.status}></Indicator>
             </td>
             <td className="py-4">
             <button onClick={handleButtonClick} type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 inline-flex items-center">

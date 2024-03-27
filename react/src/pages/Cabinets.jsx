@@ -4,6 +4,7 @@ import CabinetTable from "../components/CabinetTable/CabinetTable";
 import NavMenu from "../components/NavMenu";
 import UserInput from "../components/UserTable/UserInput";
 import { useState } from "react";
+import '../App.css'
 const Cabinets = () => {
     const [isOpen,setOpen]=useState(false)
 const [searchValue, setSearchValue] = useState('');
@@ -37,8 +38,9 @@ const openModal=()=>{
     <AddCabinetModal isOpen={isOpen} onClose={openModal}></AddCabinetModal>
 <CabinetTable searchValue={searchValue} ></CabinetTable>
         </div> 
-        <Footer></Footer>
+   
         </div>
+        <Footer></Footer>
             </body>
 
         </html>

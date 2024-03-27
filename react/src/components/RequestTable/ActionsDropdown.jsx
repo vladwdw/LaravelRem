@@ -1,9 +1,24 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate} from "react-router-dom"; 
+import RequestModal from "./RequestModal";
 const ActionsDropdown = ({isVisible,request,onDelete}) => {
     const navigate = useNavigate();
     const[stateModal,setModal]=useState(false);
+    const respondRequest= async (id) => {
+        
+        try {
+            const response = await axios.put(`http://remont.by/api/request/respond/${id}`, {
+                id:localStorage.getItem('id')
+            });
+            
+            console.log(response.data);
+
+            window.location.reload(); 
+        } catch (error) {
+            console.error('Ошибка:', error);
+        }
+    };
     const deleteRequest= async (id) => {
       
         const url = `http://remont.by/api/request/${id}`;
@@ -36,10 +51,10 @@ const ActionsDropdown = ({isVisible,request,onDelete}) => {
        }
        const handleViewClick=()=>{
 
-        navigate('/request'); 
+        navigate(`/request/${request.id}`); 
        }
        const handleRespondClick=()=>{
-
+        respondRequest(request.id);
        }
 
     return (
@@ -52,7 +67,7 @@ const ActionsDropdown = ({isVisible,request,onDelete}) => {
                         <li><a href="#" onClick={handleRespondClick} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Откликнуться</a></li>
                         <li><a href="#" onClick={handleViewClick} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Посмотреть</a></li>
                     </ul>
-                  
+                  <RequestModal isOpen={stateModal} onClose={openModal} request={request}></RequestModal>
                 </div>
              
             ): null}

@@ -38,8 +38,9 @@ const Inventories = () => {
 <AddInventoryModal  isOpen={isOpen} onClose={openModal}></AddInventoryModal>
 
     </div> 
-    <Footer></Footer>
+
     </div>
+    <Footer></Footer>
         </body>
 
     </html>

@@ -3,7 +3,7 @@ import axios from 'axios';
 import UserPagination from '../UserTable/UserPagination';
 import TableItem from './TableItem';
 import '../../App.css';
-const RequestTable = ({searchValue}) => {
+const RequestTable = ({searchValue=null, masterName=null}) => {
     const itemsPerPage = 10;
     const [pagination, setPagination] = useState({
         current_page: 1,
@@ -13,7 +13,7 @@ const RequestTable = ({searchValue}) => {
     const [data, setData] = useState([]);
     const [filteredRequests, setFilteredRequests] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
-
+    
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,8 +35,22 @@ const RequestTable = ({searchValue}) => {
         const sortedData = sortData(filteredRequests, sortConfig); // Sort the filtered inventory
         setFilteredRequests(sortedData);
     }, [filteredRequests, sortConfig]);
+
     useEffect(() => {
+        if (masterName != null) {
+            const lowerCaseSearchValue = masterName.toLowerCase();
+            const filtered = data.filter(item => {
+                // Check if employe_received is not an empty string before comparing
+                return item.employe_received && item.employe_received.toLowerCase().includes(lowerCaseSearchValue);
+            });
+            setFilteredRequests(filtered);
+        }
+    }, [masterName, data]);
+
+    useEffect(() => {
+        if(searchValue!=null){
         filterData(data);
+        }
     }, [searchValue, data]);
     const sortData = (data, config) => {
         if (!config.key) {
@@ -67,21 +81,27 @@ const RequestTable = ({searchValue}) => {
     const changePage = (page) => {
         setCurrentPage(page);
     };
-    const filterData=(data)=>{
-        const filtered = data.filter(item => 
-            item.id.toString().includes(searchValue.toLowerCase()) ||
-            item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-            item.cabinet_name.toLowerCase().includes(searchValue.toLowerCase()) ||
-            item.cabinet_id.toString().includes(searchValue.toLowerCase()) ||
-            item.inv_id.toString().includes(searchValue.toLowerCase()) ||
-            item.inv_name.includes(searchValue.toLowerCase()) ||
-            item.employe_name.includes(searchValue.toLowerCase()) ||
-            item.employe_received.includes(searchValue.toLowerCase()) ||
-            item.status.includes(searchValue.toLowerCase())
-        );
+    const filterData = (data) => {
+        const lowerCaseSearchValue = searchValue.toLowerCase();
+        const filtered = data.filter(item => {
+            const employeReceived = item.employe_received ? item.employe_received.toLowerCase() : '';
+            const invId = item.inv_id ? item.inv_id.toString() : '';
+            const invName = item.inv_name ? item.inv_name.toLowerCase() : '';
+            const inventory = item.inventory ? item.inventory.toLowerCase() : '';
+    
+            return item.id.toString().includes(lowerCaseSearchValue) ||
+                item.cabinet_name.toLowerCase().includes(lowerCaseSearchValue) ||
+                item.cabinet_id.toString().includes(lowerCaseSearchValue) ||
+                item.employe_name.toLowerCase().includes(lowerCaseSearchValue) ||
+                employeReceived.includes(lowerCaseSearchValue) ||
+                item.status.toLowerCase().includes(lowerCaseSearchValue) ||
+                (item.inv_id != null ? (
+                    invId.includes(lowerCaseSearchValue) ||
+                    invName.includes(lowerCaseSearchValue)
+                ) : inventory.includes(lowerCaseSearchValue));
+        });
         setFilteredRequests(filtered);
     }
-
     const handleDelete = (id) => {
         const updateRequests = filteredRequests.filter(request => request.id !== id);
         setFilteredRequests(updateRequests); // Update the filtered inventory state

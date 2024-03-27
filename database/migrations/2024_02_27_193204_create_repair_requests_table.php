@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreign('inv_id')
             ->references('id')->on('inventories')
             ->onDelete('cascade'); 
+            $table->string("inventoryName")->nullable();
             $table->unsignedBigInteger('cabinet_id')->nullable();
             $table->foreign('cabinet_id')
             ->references('id')->on('cabinets')

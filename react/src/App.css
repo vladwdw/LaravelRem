@@ -3,9 +3,6 @@ html, body {
     height: 100%;
     
 }
-.container {
-    overflow: auto; /* Позволяет прокрутку, если контент превышает размеры контейнера */
-   }
 
 .no-select {
     user-select: none;
@@ -13,3 +10,6 @@ html, body {
     -moz-user-select: none; /* For Firefox */
     -ms-user-select: none; /* For Internet Explorer */
 }
+.table-content {
+    overflow-y: hidden;
+   }

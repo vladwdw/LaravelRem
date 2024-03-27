@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('/employes',[EmployeController::class, 'index']);
 Route::get('/requests',[RequestsController::class, 'index']);
+Route::get('/request/{id}',[RequestsController::class, 'get']);
 Route::get('/cabinets',[CabinetController::class, 'index']);
 Route::get('/employes/get/{id}',[EmployeController::class,'get']);
 Route::get('/inventories',[InventoriesController::class, 'index']);
@@ -33,6 +34,8 @@ Route::get('/inventories',[InventoriesController::class, 'index']);
 Route::put('/cabinet/{id}',[CabinetController::class, 'update']);
 Route::put('/inventory/{id}',[InventoriesController::class, 'update']);
 Route::put('/employee/{id}', [EmployeController::class,'update']);
+Route::put('/request/respond/{id}',[RequestsController::class, 'respond']);
+Route::put('/request/{id}',[RequestsController::class, 'update']);
 
 Route::delete('/inventory/{id}',[InventoriesController::class, 'delete']);
 Route::delete('/employes/delete/{id}',[EmployeController::class,'delete']);
@@ -43,5 +46,7 @@ Route::post('/employee/create', [EmployeController::class,'create']);
 Route::post('/loginEmploye', [AuthController::class, 'login']);
 Route::post('/cabinet', [CabinetController::class,'create']);
 Route::post('/inventory',[InventoriesController::class, 'create']);
+Route::post('/request',[RequestsController::class, 'create']);
+
 
 Auth::routes();

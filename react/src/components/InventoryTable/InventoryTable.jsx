@@ -91,7 +91,7 @@ const InventoryTable = ({ searchValue }) => {
 
     return (
         <>
-            <div className="flex overflow-x-auto shadow-md sm:rounded-lg">
+            <div className="flex overflow-x-auto shadow-md mb-5 sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -120,7 +120,7 @@ const InventoryTable = ({ searchValue }) => {
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="table-content">
                       {
                             currentItems.map((inventory, index) => (
                                 <TableItem inventory={inventory} onDelete={handleDelete} />
