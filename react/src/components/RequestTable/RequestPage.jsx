@@ -10,32 +10,40 @@ import axios from "axios";
 import "./loader.css"
 import Footer from "../UserTable/Footer";
 import Indicator from "./Indicator";
+import ActionsDropdown from "./ActionsDropdown";
 const RequestPage = () => {
   const navigate = useNavigate();
-  const [request, setRequest] = useState([]);
+  const [request, setRequest] = useState();
   const [isLoading, setIsLoading] = useState(true); // Добавляем состояние загрузки
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
+  const handleButtonClick = () => {
+     setIsDropdownVisible(!isDropdownVisible);
+  };
   let { requestId } = useParams();
  
   useEffect(() => {
-     const fetchData = async () => {
-       try {
-         const response = await axios.get(`http://remont.by/api/request/${requestId}`);
-         setRequest(response.data);
-         setIsLoading(false); // Устанавливаем состояние загрузки в false после получения данных
-       } catch (error) {
-         console.error('Произошла ошибка при получении данных:', error);
-         setIsLoading(false); // Устанавливаем состояние загрузки в false в случае ошибки
-       }
-     };
- 
-     fetchData();
-  }, [requestId]); // Добавляем requestId в массив зависимостей, чтобы повторно загружать данные при изменении requestId
- 
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`http://remont.by/api/request/${requestId}`);
+            setRequest(response.data);
+            setIsLoading(false);
+        } catch (error) {
+            console.error('Произошла ошибка при получении данных:', error);
+            setIsLoading(false);
+        }
+    };
+
+    fetchData();
+}, [requestId]);
+
+
+
   if (isLoading) {
     return(
     
     <body class="container max-w-[1920px] height-[100%] mx-auto bg-slate-950">
-          <div class="items-center justify-center mx-auto h-screen md:lg:py-0">
+          <div class="items-center justify-center mx-auto  h-screen md:lg:py-0 ">
             <div class="px-[45rem] pt-[20rem]">
      <span class="loader"></span>;
      </div> 
@@ -45,84 +53,88 @@ const RequestPage = () => {
  
     return ( 
         <html class="dark">
-      <header class= "bg-slate-200 border-black dark:bg-gray-900 ">
-               <Helmet>
-                <script src="../../public\js\flowbite.min.js"></script>
-               </Helmet>
-                <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                <a href="#" onClick={() => navigate('/')} class="flex items-center space-x-3 rtl:space-x-reverse">
-    <img src="/img/remont.png" class="h-11" alt="Remont logo" />
-    <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Remont</span>
-</a>
-                <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                    <div class="buttons space-x-3">
-    
-                    </div>
-                    <button data-collapse-toggle="navbar-cta" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-cta" aria-expanded="false">
-                      <span class="sr-only">Open main menu</span>
-                      <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-                      </svg>
-                  </button>
-                </div>
-                <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-cta">
-                  <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-slate-200 rounded-lg bg-slate-200 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-slate-200 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                    <li>
-                    <a href="#" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700 "onClick={() => navigate('/inventories')}>Инвентарь</a>
-                    </li>
-                    <li>
-                      <a href="#" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700" onClick={() => navigate('/users')}>Сотрудники</a>
-                    </li>
-                    <li>
-                      <a href="#" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"onClick={() => navigate('/cabinets')}>Кабинеты</a>
-                    </li>
-                    <li>
-                      <a href="#" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700" onClick={() => navigate('/requests')}>Заявки</a>
-                    </li>
-                  </ul>
-                </div>
-                </div>
-        </header>
+<NavMenu></NavMenu>
         <body class="container max-w-[1920px] mx-auto dark:bg-slate-950  ">
-        <div class="items-center justify-center mx-auto h-screen py-[10rem] ">
+        <div class="items-center justify-center mx-auto h-screen py-[10rem] pb-[50rem] ">
           
-        <div class="max-w-sm p-3 bg-white border border-gray-200 mx-auto rounded-lg shadow   dark:bg-gray-800 dark:border-gray-700">
+        <div class="max-w-[600px] p-3 bg-white border border-gray-200 mx-auto rounded-lg shadow   dark:bg-gray-800 dark:border-gray-700 ">
   
-  <div class="px-6 py-4 ">
+  <div class="px-6 py-4 text-wrap">
     <div class="text-gray-50 font-bold text-xl mb-2">Номер заявки: {requestId}</div>
     <p class="text-gray-50 py-2">
-      Описание проблемы: {request[0].problemDescription}
+      Описание проблемы: {request.problemDescription}
     </p>
     <p class="text-gray-50 py-2">
-      Автор: {request[0].employe_name}
+      Автор: {request.employe_name}
     </p>
     <p class="text-gray-50 py-2">
-      Принял заявку: {request[0].employe_received}
+      Принял заявку: {request.employe_received}
     </p>
     <p class="text-gray-50 py-2">
-      №_Кабинет: {request[0].cabinet_id}_{request[0].cabinet_name}
+      №_Кабинет: {request.cabinet_id}_{request.cabinet_name}
     </p>
     <p class="text-gray-50 py-2">
-    Статус:  <Indicator type={request[0].status}></Indicator>
+    Статус:  <Indicator type={request.status}></Indicator>
     </p>
-    {request[0].inv_id!=null?(
     <p class="text-gray-50 py-2">
-      №_Инвентарь: {request[0].inv_id}_{request[0].inv_name}
+ Изображение:
+ <a href={"http://remont.by/uploads/repair_requests/"+request.image} target="_blank" rel="noopener noreferrer">
+ <img class="w-[200px] h-50" src={"http://remont.by/uploads/repair_requests/"+request.image} alt="Изображения нету" />
+</a>
+</p>
+    {request.inv_id!=null?(
+    <p class="text-gray-50 py-2">
+      №_Инвентарь: {request.inv_id}_{request.inv_name}
     </p>
     ): (
       <p class="text-gray-50 py-2">
-      Инвентарь: {request[0].inventoryName}
+      Инвентарь: {request.inventoryName}
     </p>
     )
 }
+<p class="text-gray-50 py-2">
+  Используемые комплектующие:
+</p>
+<div class="relative overflow-x-auto overflow-y-auto max-h-md max-w-md shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                  Наименвоание
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Количество
+                </th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+    {request.parts?.map((part, index) => (
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                {part.part_name}
+            </th>
+            <td class="px-6 py-4">
+                {part.count}
+            </td>
+        </tr>
+    ))}
+</tbody>
+    </table>
+
+</div>
+
   </div>
-  <div class="px-6 py-4">
-  <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-        Read more
-        <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-        </svg>
-    </a>
+  <div class="px-6 py-4 ">
+  <button onClick={handleButtonClick} type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 inline-flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 me-2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z" />
+    </svg>
+    Действия
+    </button>
+    
+<ActionsDropdown isVisible={isDropdownVisible} type="page" request={request}></ActionsDropdown>
   </div>
   
 </div>

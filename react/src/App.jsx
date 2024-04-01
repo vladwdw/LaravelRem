@@ -13,6 +13,8 @@ import DirectorRoute from './components/DirectorRoute';
 import Cabinet from './pages/Cabinet';
 import Requests from './pages/Requests';
 import RequestPage from './components/RequestTable/RequestPage';
+import BuyOrderPage from './components/Orders/BuyOrderPage';
+import OrderPage from './components/Orders/OrderPage';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -23,7 +25,9 @@ function App() {
     <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/request/:requestId" element={<RequestPage />} />
+        <Route path="/order/:orderId" element={<OrderPage/>} />
         <Route path="/cabinets" element={<Cabinets></Cabinets>}/>
+        <Route path="/buyOrder" element={<BuyOrderPage/>}></Route>
         <Route path="/cabinet" element={<Cabinet></Cabinet>}/>
         <Route path="/requests" element={<Requests></Requests>}/>
         <Route path="/inventories" element={<Inventories></Inventories>}/>

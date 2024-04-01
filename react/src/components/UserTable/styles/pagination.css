@@ -7,43 +7,46 @@
 }
 :root {
     --pagination-text-color: #000;
-    --pagination-hover-color: #ddd;
+    --pagination-hover-color: #011d39;
     --pagination-active-color: #007bff;
    }
    
    /* Темная тема */
    .dark {
     --pagination-text-color: #fff;
-    --pagination-hover-color: #555;
+    --pagination-hover-color:rgba(2, 86, 107, 0.2);
     --pagination-active-color: #007bff;
    }
    
    .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    list-style: none;
-    padding: 0;
-    gap: 8px;
+    position: relative;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+  border-radius: 2px;
 
    }
    
    
    .page-link {
-    cursor: pointer;
-    padding: 5px 10px;
-    color: var(--pagination-text-color);
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    position: relative;
+    padding: 15px 25px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
    }
    
    .page-link:hover {
     background-color: var(--pagination-hover-color);
+   
    }
    
    .active .page-link {
-    background-color: var(--pagination-active-color);
-    color: white;
+    background: rgba(2, 86, 107, 0.2);
    }
    
    .disabled .page-link {

@@ -14,7 +14,10 @@ class RepairRequest extends Model
             'full_name' => 'Не указано',
         ]);
     }
-    
+    public function partsInRequest()
+    {
+        return $this->hasMany(PartInRequest::class, 'part_id'); // Specify the foreign key column
+    }
     public function employeRecieved()
     {
         return $this->belongsTo(Employe::class)->withDefault([

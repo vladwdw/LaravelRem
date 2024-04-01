@@ -18,21 +18,25 @@ return new class extends Migration
             $table->foreign('inv_id')
             ->references('id')->on('inventories')
             ->onDelete('cascade'); 
+            $table->dateTime("created")->default(now());
+            $table->dateTime("doned")->nullable();
             $table->string("inventoryName")->nullable();
             $table->unsignedBigInteger('cabinet_id')->nullable();
             $table->foreign('cabinet_id')
             ->references('id')->on('cabinets')
             ->onDelete('cascade'); 
+            
             $table->unsignedBigInteger('employe_id')->nullable();
             $table->foreign('employe_id')
             ->references('id')->on('employes')
             ->onDelete('cascade'); 
             $table->unsignedBigInteger('recieve_id')->nullable();
             $table->foreign('recieve_id')
+   
             ->references('id')->on('employes'); 
             $table->text('problemDescription');
             $table->enum('status', ['Выполнен', 'Отклонен', 'На обработке', 'В ожидании', 'Подтверждение'])->default('В ожидании');
-
+            $table->text("image")->nullable();
         });
     }
 

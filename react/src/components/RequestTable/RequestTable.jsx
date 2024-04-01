@@ -3,7 +3,7 @@ import axios from 'axios';
 import UserPagination from '../UserTable/UserPagination';
 import TableItem from './TableItem';
 import '../../App.css';
-const RequestTable = ({searchValue=null, masterName=null}) => {
+const RequestTable = ({searchValue=null, masterName=null, employeName=null}) => {
     const itemsPerPage = 10;
     const [pagination, setPagination] = useState({
         current_page: 1,
@@ -19,14 +19,21 @@ const RequestTable = ({searchValue=null, masterName=null}) => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://remont.by/api/requests');
-                setData(response.data.data);
+                // Map over the data to add the 'inv' field
+                const dataWithInv = response.data.data.map(item => ({
+                    ...item,
+                    inv: item.inventory ? item.inventory : `${item.inv_id}_${item.inv_name}`
+                }));
+    
+                setData(dataWithInv);
                 setPagination(response.data);
-                filterData(response.data.data);
+                // Assuming filterData is a function that takes the modified data
+                filterData(dataWithInv);
             } catch (error) {
                 console.error('Произошла ошибка при получении данных:', error);
             }
         };
-
+    
         fetchData();
     }, []);
 
@@ -36,22 +43,34 @@ const RequestTable = ({searchValue=null, masterName=null}) => {
         setFilteredRequests(sortedData);
     }, [filteredRequests, sortConfig]);
 
+
+
+//Поиск данных
     useEffect(() => {
-        if (masterName != null) {
+        if(searchValue!=null){
+        if(employeName!=null){
+            const lowerCaseSearchValue = employeName.toLowerCase();
+            const filtered = data.filter(item => {
+                // Check if employe_received is not an empty string before comparing
+                return item.employe_name && item.employe_name.toLowerCase().includes(lowerCaseSearchValue) && item.status!="Выполнен";
+            });
+            filterData(filtered);
+        }
+        else if(masterName!=null){
             const lowerCaseSearchValue = masterName.toLowerCase();
             const filtered = data.filter(item => {
                 // Check if employe_received is not an empty string before comparing
                 return item.employe_received && item.employe_received.toLowerCase().includes(lowerCaseSearchValue);
             });
-            setFilteredRequests(filtered);
+            filterData(filtered);
         }
-    }, [masterName, data]);
-
-    useEffect(() => {
-        if(searchValue!=null){
+        else{
         filterData(data);
         }
+        }
     }, [searchValue, data]);
+
+
     const sortData = (data, config) => {
         if (!config.key) {
             return data;
@@ -125,7 +144,7 @@ const RequestTable = ({searchValue=null, masterName=null}) => {
                             <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('id')}>
                                 №Заявки
                             </th>
-                            <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('inv_id')}>
+                            <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('inv')}>
                                 №_Инвентарь
                             </th>
                             <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('cabinet_id')}>

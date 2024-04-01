@@ -1,0 +1,24 @@
+
+Событие:
+SET GLOBAL event_scheduler = ON;
+DELIMITER $$
+CREATE EVENT `update_inventory_status`
+ON SCHEDULE EVERY 1 DAY
+STARTS CURRENT_DATE
+ON COMPLETION NOT PRESERVE ENABLE
+DO
+BEGIN
+    -- Обновление статуса в таблице inventories
+    UPDATE inventories
+    SET status = 'Списан'
+    WHERE spisDate = CURDATE();
+
+    -- Вставка данных в таблицу spis_invs
+    INSERT INTO spis_invs (reason, inv_id)
+    SELECT 'Срок подошел к концу', id
+    FROM inventories
+    WHERE spisDate = CURDATE();
+END$$
+DELIMITER ;
+
+Тригер:

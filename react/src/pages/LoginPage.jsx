@@ -26,12 +26,11 @@ const LoginPage = () => {
             localStorage.setItem('id',response.data.id)
 
             // Вызываем метод login из AuthContext с полученным токеном
-            navigate('/users');
+            navigate('/cabinet');
 
             // Перенаправление пользователя на главную страницу или другой маршрут
         } catch (error) {
             setErrorMessage('Неверные учетные данные');
-            localStorage.setItem('auth',false);
         }
     };
 

@@ -1,0 +1,15 @@
+DELIMITER $$
+CREATE TRIGGER check_time_before_confirmation
+BEFORE UPDATE ON repair_requests
+FOR EACH ROW
+BEGIN
+    DECLARE time_difference INT;
+    IF NEW.status = 'Подтверждение' THEN
+        SET time_difference = TIMESTAMPDIFF(MINUTE, OLD.created, NEW.doned);
+        IF time_difference < 10 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Время между созданием заявки и выполнением должно быть не менее 10 минут';
+        END IF;
+    END IF;
+END$$
+DELIMITER ;

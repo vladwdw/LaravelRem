@@ -21,7 +21,7 @@ const Indicator = ({type}) => {
             Выполнен
         </span>
         ):type==="Подтверждение"?(
-            <span className="inline-flex items-center bg-pink-100 text-pink-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-pink-800 dark:text-pink-400">
+            <span className="inline-flex items-center bg-pink-100 text-pink-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-pink-800 dark:text-pink-200">
             <span className="w-2 h-2 me-1 bg-pink-500 rounded-full"></span>
             Подтверждение
         </span>
