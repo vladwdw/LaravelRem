@@ -161,6 +161,7 @@ class RequestsController extends Controller
                 } 
                 elseif ($validatedData['status']=="Отклонен"){
                     $repair->status="Отклонен";
+                    $repair->doned=now();
                     $repair->save();
                     DB::commit();
                     return response()->json('Статус был изменен');
@@ -268,7 +269,42 @@ class RequestsController extends Controller
                 'total' => $requests->total(),
             ],
         ]);
+    }function getRepairCount($employeId, Request $request) {
+        $year = $request->input('year'); // Извлекаем год из запроса
+    
+        // Создаем временную таблицу с месяцами года
+        DB::statement("CREATE TEMPORARY TABLE temp_months (month INT)");
+        for ($month = 1; $month <= 12; $month++) {
+            DB::table('temp_months')->insert(['month' => $month]);
+        }
+    
+        // Получаем данные о количестве заявок для указанного сотрудника за указанный год, разбивая по месяцам
+        $results = DB::table('temp_months')
+            ->leftJoin('repair_requests', function ($join) use ($employeId, $year) {
+                $join->on(DB::raw('MONTH(repair_requests.created)'), '=', 'temp_months.month')
+                    ->where('repair_requests.employe_id', $employeId)
+                    ->whereYear('repair_requests.created', $year);
+            })
+            ->select(
+                'temp_months.month',
+                DB::raw('COUNT(repair_requests.id) as count')
+            )
+            ->groupBy('temp_months.month')
+            ->get();
+    
+        // Удаляем временную таблицу
+        DB::statement("DROP TEMPORARY TABLE temp_months");
+    
+        // Преобразуем результаты в удобный для использования формат
+        $formattedResults = $results->map(function ($result) {
+            return ['month' => $result->month+1, 'count' => $result->count];
+        })->toArray();
+    
+        // Возвращаем данные в формате JSON
+        return response()->json($formattedResults);
     }
+    
+    
     public function create(Request $request)
     {
         $validatedData = $request->validate([
@@ -278,6 +314,7 @@ class RequestsController extends Controller
             'cabinet_id' => 'required|integer',
             'problemDescription' => 'required|string',
             'image' => 'nullable|image',
+            'inv_id'=>'integer'
         ]);
     
         if ($validatedData['type'] == 'inv_id' && $validatedData['inv_id'] != null) {

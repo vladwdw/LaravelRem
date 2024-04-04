@@ -4,38 +4,105 @@ namespace App\Http\Controllers;
 use App\Models\Inventory;
 use App\Models\SpisInv;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 class InventoriesController extends Controller
 {
-
-    public function index(){
-        // Загрузка инвентаря с данными кабинета
-        $inventories = Inventory::with('cabinet')->where('status','Доступен')->paginate();
-        // Создаем пустой массив для хранения преобразованных данных
-        $inventoriesWithCabinetNames = [];
-
-        // Используем foreach для итерации по каждому элементу коллекции
+    public function sort() {
+        // Подзапрос для подсчета количества ремонтов для каждого элемента инвентаря
+        $subQuery = DB::table('repair_requests')
+            ->select('inv_id', DB::raw('COUNT(*) as repairs_count'))
+            ->where('status', 'Выполнен')
+            ->groupBy('inv_id');
+    
+        // Основной запрос, который соединяет инвентарь с подзапросом по количеству ремонтов
+        $inventories = DB::table('inventories')
+        ->leftJoinSub($subQuery, 'repairs', function ($join) {
+            $join->on('inventories.id', '=', 'repairs.inv_id');
+        })
+        ->leftJoin('cabinets', 'inventories.cabinet_id', '=', 'cabinets.id') // Добавляем соединение с таблицей cabinets
+        ->select('inventories.*', 'repairs.repairs_count', 'cabinets.name as cabinet_name') // Указываем, что хотим получить имя кабинета
+        ->orderBy('repairs.repairs_count', 'desc')
+        ->where('status','Доступен')
+        ->paginate();
+    
+        // Преобразование данных для пагинации
+        $pagination = [
+            'current_page' => $inventories->currentPage(),
+            'last_page' => $inventories->lastPage(),
+            'per_page' => $inventories->perPage(),
+            'total' => $inventories->total(),
+        ];
+    
+        // Преобразование данных инвентаря для вывода с использованием foreach
+        $inventoriesData = [];
         foreach ($inventories as $inventory) {
-            $inventoriesWithCabinetNames[] = [
+            $inventoriesData[] = [
                 'id' => $inventory->id,
-                'cabinet_id'=>$inventory->cabinet->id,
-                'name' => $inventory->name, // Предполагая, что у вас есть поле 'name' в модели Inventory
-                'cabinet_name' => $inventory->cabinet ? $inventory->cabinet->name : null,
-                'buyDate'=> $inventory->buyDate,
-                'spisDate'=>$inventory->spisDate // Исправил опечатку 'spisDate' на 'buyDate'
+                'cabinet_id' => $inventory->cabinet_id,
+                'name' => $inventory->name,
+                'cabinet_name' =>  $inventory->cabinet_name,
+                'buyDate' => $inventory->buyDate,
+                'spisDate' => $inventory->spisDate,
+                'repairs_count' => $inventory->repairs_count,
             ];
         }
-
+    
         return response()->json([
-            'data' => $inventoriesWithCabinetNames,
-            'pagination' => [
-                'current_page' => $inventories->currentPage(),
-                'last_page' => $inventories->lastPage(),
-                'per_page' => $inventories->perPage(),
-                'total' => $inventories->total(),
-            ],
+            'data' => $inventoriesData,
+            'pagination' => $pagination,
         ]);
     }
+    function getHistory($inventoryId) {
+        $inv=Inventory::find($inventoryId);
+        $inv_name=$inv->name;
+        $repairHistory = DB::table('repair_requests as rr')
+        ->join('inventories as i', 'rr.inv_id', '=', 'i.id')
+        ->join('employes as e1', 'rr.employe_id', '=', 'e1.id')
+        ->join('employes as e2', 'rr.recieve_id', '=', 'e2.id')
+        ->select(
+            'rr.created as created_date',
+            'rr.doned as doned_date',
+            'rr.problemDescription as problemDescription',
+            'i.name as inventory_name',
+            'e1.full_name as sender',
+            'e2.full_name as receiver'
+        )
+        ->where('rr.inv_id', $inventoryId)
+        ->orderBy('rr.created', 'desc')
+        ->get();
+    
+        return response()->json([
+            'data'=>$repairHistory,
+            'inv_name'=>$inv_name,
+        ]);
+    }
+    
+
+public function index(){
+    $inventories = Inventory::with('cabinet')->where('status','Доступен')->paginate();
+    $inventoriesWithCabinetNames = [];
+
+    foreach ($inventories as $inventory) {
+        $inventoriesWithCabinetNames[] = [
+            'id' => $inventory->id,
+            'cabinet_id'=>$inventory->cabinet->id,
+            'name' => $inventory->name,
+            'cabinet_name' => $inventory->cabinet ? $inventory->cabinet->name : null,
+            'buyDate'=> $inventory->buyDate,
+            'spisDate'=>$inventory->spisDate // Исправлено на правильное название поля
+        ];
+    }
+
+    return response()->json([
+        'data' => $inventoriesWithCabinetNames,
+        'pagination' => [
+            'current_page' => $inventories->currentPage(),
+            'last_page' => $inventories->lastPage(),
+            'per_page' => $inventories->perPage(),
+            'total' => $inventories->total(),
+        ],
+    ]);
+}
     public function spis(Request $request,$id){
         try {
             $validatedData=$request->toArray();

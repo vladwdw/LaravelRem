@@ -3,7 +3,7 @@ import { TabItem } from 'flowbite-react';
 import TableItem from './TableItem';
 import React, { useState, useEffect } from 'react';
 import UserPagination from './UserPagination';
-const UserTable = ({searchValue}) => {
+const UserTable = ({searchValue=null, type=null, user=null}) => {
 
     const [data, setData] = useState([]);
     const [pagination, setPagination] = useState({});
@@ -21,6 +21,7 @@ const UserTable = ({searchValue}) => {
 
 
      useEffect(() => {
+        if(type==null){
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://remont.by/api/employes');
@@ -31,11 +32,27 @@ const UserTable = ({searchValue}) => {
                 console.error('Произошла ошибка при получении данных:', error);
             }
         };
-
         fetchData();
+    }
+    if(type=="top"){
+        
+        setData(user);
+        filterData(user);
+        
+        
+    }
+
+       
     }, []);
+    useEffect(()=>{
+        if(type=="top"){
+        setData(user);
+        filterData(user);
+        }
+    },[user])
 
     const filterData = (data) => {
+     
         const filtered = data.filter((user) =>
             searchValue.toLowerCase() === '' ||
             user.username.toLowerCase().includes(searchValue.toLowerCase()) ||
@@ -44,6 +61,7 @@ const UserTable = ({searchValue}) => {
         );
         setFilteredData(filtered);
         setCurrentPage(1); // Reset to the first page after filtering
+        
     };
 
     useEffect(() => {
@@ -70,22 +88,28 @@ const UserTable = ({searchValue}) => {
                             <th scope="col" class="px-6 py-3">Имя пользователя</th>
                             <th scope="col" class="px-4 py-3">ФИО</th>
                             <th scope="col" class="px-6 py-3">Должность</th>
+                            {type==null?(
                             <th scope="col" class="px-6 py-3">Действия</th>
+                            ): type=="top"?(
+                                <th scope="col" class="px-6 py-3">Количество ремонтов</th>
+                            ):null
+                            }
                         </tr>
                     </thead>
                     <tbody>
                         {currentItems.map(user => (
-                            <TableItem key={user.id} user={user} onDelete={handleDelete} />
+                            <TableItem type={type} key={user.id} user={user} onDelete={handleDelete} />
                         ))}
                     </tbody>
                 </table>
             </div>
-
+            {type==null?(
             <UserPagination
                 currentPage={currentPage}
                 lastPage={Math.ceil(filteredData.length / itemsPerPage)}
                 onChangePage={changePage}
-            />
+            />):null
+}
         </>
     );
 

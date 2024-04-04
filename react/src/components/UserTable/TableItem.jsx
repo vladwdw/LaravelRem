@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Helmet } from "react-helmet";
 import ActionsDropdown from "./ActionsDropdown";
 
-const TableItem = ({user,onDelete}) => {
+const TableItem = ({user,onDelete,type}) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const handleButtonClick = () => {
@@ -27,6 +27,7 @@ const TableItem = ({user,onDelete}) => {
     <td class="px-6 py-4">
         {user.position}
     </td>
+    {type==null?(
     <td class=" py-4">
     <button onClick={handleButtonClick} type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 inline-flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 me-2">
@@ -38,6 +39,12 @@ const TableItem = ({user,onDelete}) => {
 <ActionsDropdown isVisible={isDropdownVisible} onDelete={onDelete} user={user}></ActionsDropdown>
 
     </td>
+    ):type=="top"?(
+        <td class="px-6 py-4">
+        {user.repairs_count}
+    </td>
+    ):null
+}
 </tr> 
 );
 }

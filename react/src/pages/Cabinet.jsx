@@ -6,6 +6,7 @@ import RequestTable from "../components/RequestTable/RequestTable";
 import UserInput from "../components/UserTable/UserInput";
 import { useNavigate } from "react-router-dom";
 import OrdersTable from "../components/Orders/OrdersTable";
+import UserChart from "../components/Query1/UserChart";
 const Cabinet = () => {
     const navigate=useNavigate();
     const [isOpen,setOpen]=useState(false)
@@ -85,15 +86,22 @@ const Cabinet = () => {
 <RequestTable searchValue={searchValue} masterName={localStorage.getItem('full_name')}></RequestTable>
       
       </div>):localStorage.getItem('position')=="сотрудник"? (
-   <div class="mt-5 mx-auto lg:justify-center sm:w-[45rem] md:w-[50rem] lg:w-[65rem] h-[60rem] relative overflow-x-hidden overflow-hidden shadow-md">
+        <>
+   <div class="mt-5 mx-auto lg:justify-center sm:w-[45rem] md:w-[50rem] lg:w-[65rem] h-[70rem] relative overflow-x-hidden overflow-hidden shadow-md">
    <div class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
      
 
    <UserInput search={handleSearch}></UserInput>
    </div>
 <RequestTable searchValue={searchValue} employeName={localStorage.getItem('full_name')}></RequestTable>
+<div class="mt-6">
+<UserChart> </UserChart>
+</div>
 
 </div>
+
+
+</>
       ):localStorage.getItem('position')=="директор"? (
         <div class="mt-5 mx-auto lg:justify-center sm:w-[45rem] md:w-[50rem] lg:w-[65rem] h-[60rem] relative overflow-x-hidden overflow-hidden shadow-md">
         <div class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">

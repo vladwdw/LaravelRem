@@ -2,10 +2,11 @@ import axios from "axios";
 import { useState } from "react";
 import InventoryModal from "./InventoryModal";
 import ReasonModal from "./ReasonModal";
-
+import { useNavigate } from "react-router-dom";
 const ActionsDropdown = ({isVisible,inventory,onDelete}) => {
     const[stateModal,setModal]=useState(false);
     const [reasonVisible,setReasonVisible]=useState(false);
+    const navigate = useNavigate();
     const deleteInventory = async (id) => {
       
         const url = `http://remont.by/api/inventory/${id}`;
@@ -45,9 +46,11 @@ const ActionsDropdown = ({isVisible,inventory,onDelete}) => {
                         <li><a href="#" onClick={handleClick} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Удалить</a></li>
                         <li><a href="#" onClick={openModal} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Редактировать</a></li>
                         <li><a href="#" onClick={()=>{setReasonVisible(!reasonVisible);}} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Списать</a></li>
+                        <li><a href="#" onClick={()=>{navigate(`/inventory/${inventory.id}`)}} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Посмотреть историю ремонта</a></li>
                     </ul>
                     <InventoryModal isOpen={stateModal} onClose={openModal} inventory={inventory}></InventoryModal>
                     <ReasonModal isOpen={reasonVisible} onClose={()=>{setReasonVisible(!reasonVisible);}} inventory={inventory}></ReasonModal>
+
                 </div>
              
             ): null}

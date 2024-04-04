@@ -7,6 +7,7 @@ use App\Http\Controllers\CabinetController;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BuyOrderController;
+use App\Http\Controllers\DocumentsController;
 use App\Http\Controllers\EmployeController;
 use App\Http\Controllers\InventoriesController;
 use App\Http\Controllers\PartController;
@@ -30,6 +31,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/image/{id}', [RequestsController::class,'image']);
 Route::get('/zapros1', [ZaprosController::class,'zapros1']);
 Route::get('/employes',[EmployeController::class, 'index']);
+Route::get('/employes/top',[EmployeController::class, 'getTopEmployesByRepairs']);
+Route::get('/cabinets/inventory',[CabinetController::class,'getCabinetsWithInventoryCount']);
 Route::get('/orders',[BuyOrderController::class, 'index']);
 Route::get('/order/{id}',[BuyOrderController::class, 'get']);
 Route::get('/requests',[RequestsController::class, 'index']);
@@ -38,6 +41,10 @@ Route::get('/request/{id}',[RequestsController::class, 'get']);
 Route::get('/cabinets',[CabinetController::class, 'index']);
 Route::get('/employes/get/{id}',[EmployeController::class,'get']);
 Route::get('/inventories',[InventoriesController::class, 'index']);
+Route::get('/inventories/sort',[InventoriesController::class, 'sort']);
+Route::get('/inventory/{id}',[InventoriesController::class, 'getHistory']);
+Route::get('/employe/history/{id}',[RequestsController::class,'getRepairCount']);
+Route::get('/document/invoice/{id}',[DocumentsController::class,'ReceiptInvoice']);
 
 Route::put('/cabinet/{id}',[CabinetController::class, 'update']);
 Route::put('/inventory/{id}',[InventoriesController::class, 'update']);

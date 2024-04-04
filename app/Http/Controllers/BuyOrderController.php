@@ -16,7 +16,7 @@ class BuyOrderController extends Controller
     
         $buyOrder = new BuyOrder();
         $buyOrder->sender_id = $employe_id; // Assuming sender_id is meant to be employe_id
-        $buyOrder->created_at = now(); // Corrected field name for Laravel's timestamp
+        $buyOrder->created = now(); // Corrected field name for Laravel's timestamp
         $buyOrder->save();
     
         foreach ($data['fields'] as $item) {
@@ -77,11 +77,13 @@ class BuyOrderController extends Controller
                 $part = Part::find($partData['id']);
                 $part->status="Доступен";
                 $part->count=$partData['count'];
+            
                 $part->save();
             }
         }
         if ($order) {
             $order->status = "Выполнен";
+            $order->accepted=now();
             $order->save();
         }
     

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Inventory extends Model
 {
     use HasFactory;
+    protected $fillable = ['name', 'buyDate', 'spisDate', 'status', 'cabinet_id'];
     public function cabinet()
     {
         return $this->belongsTo(Cabinet::class);

@@ -4,7 +4,7 @@ import UserPagination from '../UserTable/UserPagination';
 import TableItem from './TableItem';
 import '../../App.css';
 
-const InventoryTable = ({ searchValue }) => {
+const InventoryTable = ({ searchValue, type=null }) => {
     const itemsPerPage = 10;
     const [pagination, setPagination] = useState({
         current_page: 1,
@@ -15,21 +15,32 @@ const InventoryTable = ({ searchValue }) => {
     const [filteredInventory, setFilteredInventory] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
-
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const response = await axios.get('http://remont.by/api/inventories');
-                setData(response.data.data);
-                setPagination(response.data);
-                filterData(response.data.data);
-            } catch (error) {
-                console.error('Произошла ошибка при получении данных:', error);
+            if (type == null) {
+                try {
+                    const response = await axios.get('http://remont.by/api/inventories');
+                    setData(response.data.data);
+                    setPagination(response.data);
+                    filterData(response.data.data);
+                } catch (error) {
+                    console.error('Произошла ошибка при получении данных:', error);
+                }
+            }
+            else if (type=="sortInv"){
+                try {
+                    const response = await axios.get('http://remont.by/api/inventories/sort');
+                    setData(response.data.data);
+                    setPagination(response.data);
+                    filterData(response.data.data);
+                } catch (error) {
+                    console.error('Произошла ошибка при получении данных:', error);
+                }
             }
         };
-
+    
         fetchData();
-    }, []);
+    }, [type]); // Добавьте type в список зависимостей, если он может изменяться
 
 
     useEffect(() => {
@@ -115,15 +126,17 @@ const InventoryTable = ({ searchValue }) => {
                             <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('cabinet_id')}>
                                 №_Кабинет
                             </th>
+                            {type==null?(
                             <th scope="col" class="px-6 py-3 no-select">
                                 Действия
-                            </th>
+                            </th>):null
+                            }   
                         </tr>
                     </thead>
                     <tbody class="table-content">
                       {
                             currentItems.map((inventory, index) => (
-                                <TableItem inventory={inventory} onDelete={handleDelete} />
+                                <TableItem inventory={inventory} type={type} onDelete={handleDelete} />
                             ))
                             }
                     </tbody>

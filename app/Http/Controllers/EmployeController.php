@@ -5,6 +5,7 @@ use App\Models\Employe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 class EmployeController extends Controller
 {
     public function index()
@@ -28,6 +29,41 @@ class EmployeController extends Controller
             'position'=>$employe->position
         ]);
     }
+    public function getTopEmployesByRepairs(Request $request)
+{
+    $startDate = $request->input('start_date');
+    $endDate = $request->input('end_date');
+
+    // Проверяем, что даты были переданы и корректны
+    if (!$startDate || !$endDate) {
+        return response()->json(['error' => 'Даты не указаны'], 400);
+    }
+
+    // Выполняем запрос
+    $topEmployes = DB::table('repair_requests')
+        ->select('recieve_id', DB::raw('count(*) as repairs_count'))
+        ->whereBetween('doned', [$startDate, $endDate])
+        ->where('status', 'Выполнен')
+        ->groupBy('recieve_id')
+        ->orderBy('repairs_count', 'desc')
+        ->limit(5) // Получаем топ-5 сотрудников
+        ->get();
+
+    // Получаем данные сотрудников
+    $employesData = [];
+    foreach ($topEmployes as $topEmploye) {
+        $employe = Employe::find($topEmploye->recieve_id);
+        $employesData[] = [
+            'id' => $employe->id,
+            'username' => $employe->username,
+            'full_name' => $employe->full_name,
+            'position' => $employe->position,
+            'repairs_count' => $topEmploye->repairs_count,
+        ];
+    }
+
+    return response()->json($employesData);
+}
     public function update(Request $request, $id)
     {
         try {

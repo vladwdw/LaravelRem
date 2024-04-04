@@ -37,6 +37,30 @@ const OrderPage = () => {
        console.error('Error updating order and parts status:', error);
     }
    };
+   const getDocument = async () => {
+    try {
+       // Получаем ID сотрудника из localStorage
+       const response = await axios.get(`http://remont.by/api/document/invoice/${orderId}`, {
+         responseType: 'blob', // Указываем, что ожидаемый ответ - Blob
+       });
+
+       const url = window.URL.createObjectURL(new Blob([response.data]));
+       const link = document.createElement('a');
+       link.href = url;
+       link.setAttribute('download', `Накладная_${orderId}.docx`);
+   
+       // Добавление ссылки на страницу
+       document.body.appendChild(link);
+   
+       // Начало скачивания
+       link.click();
+   
+       // Очистка и удаление ссылки
+       link.parentNode.removeChild(link);
+    } catch (error) {
+       console.error("Ошибка при обновлении данных", error);
+    }
+   }
    const aproveOrder = async () => {
     try {
        // Assuming `order` contains the order data and `order.parts` contains the parts data
@@ -184,7 +208,17 @@ const OrderPage = () => {
     Отклонить
     </button>
 
-  </div>):null
+  </div>):order.status=="Выполнен"?(
+    <div class="px-6 py-4">
+          <button
+      type="button"
+      class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+      onClick={getDocument}
+    >
+    Приходная накладная
+    </button>
+      </div>
+  ):null
 }
 </div>
 
