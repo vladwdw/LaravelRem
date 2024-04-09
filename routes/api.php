@@ -45,6 +45,8 @@ Route::get('/inventories/sort',[InventoriesController::class, 'sort']);
 Route::get('/inventory/{id}',[InventoriesController::class, 'getHistory']);
 Route::get('/employe/history/{id}',[RequestsController::class,'getRepairCount']);
 Route::get('/document/invoice/{id}',[DocumentsController::class,'ReceiptInvoice']);
+Route::get('/document/repair/{id}',[DocumentsController::class,'RemontDocument']);
+Route::get('/document/excel',[DocumentsController::class,'export']);
 
 Route::put('/cabinet/{id}',[CabinetController::class, 'update']);
 Route::put('/inventory/{id}',[InventoriesController::class, 'update']);

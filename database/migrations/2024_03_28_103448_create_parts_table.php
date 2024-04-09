@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreign("order_id")->references("id")->on("buy_orders")->onDelete('cascade');
             $table->bigInteger("count");
             $table->bigInteger("Buy_count");
-            $table->integer("price");
+            $table->double("price");
             $table->enum("status",["В закупке","Доступен","Закончился"])->default("В закупке");
         });
     }

@@ -7,6 +7,7 @@ import UserInput from "../components/UserTable/UserInput";
 import { useNavigate } from "react-router-dom";
 import OrdersTable from "../components/Orders/OrdersTable";
 import UserChart from "../components/Query1/UserChart";
+import Excel from "../components/Query1/Excel";
 const Cabinet = () => {
     const navigate=useNavigate();
     const [isOpen,setOpen]=useState(false)
@@ -110,8 +111,10 @@ const Cabinet = () => {
 
         </div>
         <OrdersTable></OrdersTable>
-     
+      
+        <Excel></Excel>
      </div>
+     
       ):null
 }
       <Footer></Footer>    

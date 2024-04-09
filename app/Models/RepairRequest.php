@@ -24,7 +24,35 @@ class RepairRequest extends Model
             'full_name' => 'Не указано',
         ]);
     }
+    public function getPartsNames()
+    {
+        // Получаем все комплектующие, связанные с текущей заявкой на ремонт
+        $parts = $this->partsInRequest()->with('part')->get();
     
+        // Создаем массив для хранения информации о комплектующих
+        $partsInfo = [];
+        $total=0;
+        // Проходим по каждому комплектующему и добавляем его информацию в массив
+        foreach ($parts as $part) {
+            // Добавляем в массив всю информацию о комплектующем
+            $partsInfo[] = [
+          
+                'name' => $part->part->part, // Предполагается, что 'part' - это наименование комплектующего
+                'count' => $part->count, 
+                'price'=>$part->part->price,
+                'sum'=>$part->count * $part->part->price
+                
+            ];
+
+            $total+=$part->part->price*$part->count;
+        }
+        $data[]=[
+            'parts:'=>$partsInfo,
+            'total: '=>$total
+        ];
+    
+        return $data;
+    }
     public function inventory()
     {
         return $this->belongsTo(Inventory::class);

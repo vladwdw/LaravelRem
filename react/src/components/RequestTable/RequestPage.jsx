@@ -20,8 +20,32 @@ const RequestPage = () => {
   const handleButtonClick = () => {
      setIsDropdownVisible(!isDropdownVisible);
   };
+
   let { requestId } = useParams();
- 
+  const getDocument = async () => {
+    try {
+       // Получаем ID сотрудника из localStorage
+       const response = await axios.get(`http://remont.by/api/document/repair/${requestId}`, {
+         responseType: 'blob', // Указываем, что ожидаемый ответ - Blob
+       });
+
+       const url = window.URL.createObjectURL(new Blob([response.data]));
+       const link = document.createElement('a');
+       link.href = url;
+       link.setAttribute('download', `АктРемонта_${requestId}.docx`);
+   
+       // Добавление ссылки на страницу
+       document.body.appendChild(link);
+   
+       // Начало скачивания
+       link.click();
+   
+       // Очистка и удаление ссылки
+       link.parentNode.removeChild(link);
+    } catch (error) {
+       console.error("Ошибка при обновлении данных", error);
+    }
+   }
   useEffect(() => {
     const fetchData = async () => {
         try {
@@ -135,8 +159,21 @@ const RequestPage = () => {
     </button>
     
 <ActionsDropdown isVisible={isDropdownVisible} type="page" request={request}></ActionsDropdown>
+{
+request.status=="Выполнен"?(
+<div class=" py-4">
+          <button
+      type="button"
+      class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+      onClick={getDocument}
+    >
+   Акт ремонта
+    </button>
+      </div>
+):null
+}
   </div>
-  
+
 </div>
 
     </div>
