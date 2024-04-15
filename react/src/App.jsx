@@ -17,6 +17,7 @@ import BuyOrderPage from './components/Orders/BuyOrderPage';
 import OrderPage from './components/Orders/OrderPage';
 import Zapros from './pages/Zapros';
 import InventoryPage from './components/InventoryTable/InventoryPage';
+import MasterRoute from './components/MasterRoute';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -29,12 +30,22 @@ function App() {
         <Route path="/request/:requestId" element={<RequestPage />} />
         <Route path="/order/:orderId" element={<OrderPage/>} />
         <Route path="/inventory/:InvId" element={<InventoryPage></InventoryPage>} />
+        <Route element={<MasterRoute></MasterRoute>}>
         <Route path="/cabinets" element={<Cabinets></Cabinets>}/>
+        </Route>
         <Route path="/zapros" element={<Zapros></Zapros>}></Route>
+        <Route element={<MasterRoute></MasterRoute>}>
         <Route path="/buyOrder" element={<BuyOrderPage/>}></Route>
+        </Route>
+        <Route element={<ProtectedRoute></ProtectedRoute>}>
         <Route path="/cabinet" element={<Cabinet></Cabinet>}/>
+        </Route>
+        <Route element={<MasterRoute></MasterRoute>}>
         <Route path="/requests" element={<Requests></Requests>}/>
+        </Route>
+        <Route element={<MasterRoute></MasterRoute>}>
         <Route path="/inventories" element={<Inventories></Inventories>}/>
+        </Route>
           <Route path="/login" element={<LoginPage />} />
           <Route element={<DirectorRoute></DirectorRoute>}>
             <Route path="/users" element={<AllUsers></AllUsers>}></Route>

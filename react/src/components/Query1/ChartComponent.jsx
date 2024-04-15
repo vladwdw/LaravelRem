@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import Chart from "react-apexcharts";
 import axios from "axios";
+import SuccesNotification from "../SuccessNotification";
+import ErrorNotification from "../ErrorNotification";
 const ChartComponent = () => {
   const [startDate,setStartDate]=useState();
   const [endDate,setEndDate]=useState();
+  const [notification, setNotification] = useState({ message: '', type: '' });
   const [data,setData]=useState();
   const [series, setSeries] = useState([
     {
@@ -108,6 +111,15 @@ const ChartComponent = () => {
   },
 
  });
+ const showSuccess = (message) => {
+  setNotification({ message, type: 'success' });
+};
+const clearNotification = () =>{
+  setNotification({ message: '', type: '' });
+}
+const showError = (message) => {
+  setNotification({ message, type: 'error' });
+};
  const chartRef = useRef(null); // Ссылка на компонент Chart
  const dataGet = async (event) => {
   event.preventDefault();
@@ -137,7 +149,9 @@ const ChartComponent = () => {
         data: rejectedOrdersData,
       },
     ]);
+    showSuccess("График был построен успешно");
   } catch (error) {
+    showError("Ошибка, проверьте введенные даты!");
     console.error("Ошибка при обновлении данных", error);
   }
 };
@@ -183,6 +197,17 @@ const ChartComponent = () => {
           </button>
         </div>
       </div>
+      {notification.message && notification.type=="error" &&(
+      <div class="fixed z-100 right-2 bottom-0">
+      <ErrorNotification message={notification.message} clearNotification={clearNotification}></ErrorNotification>
+      </div>
+      )}
+                              {notification.message && notification.type=="success" &&(
+    <div class="fixed z-100 right-5 bottom-0">
+    <SuccesNotification message={notification.message} clearNotification={clearNotification} ></SuccesNotification>
+    </div>
+      )}
+
     </div>
  );
 };

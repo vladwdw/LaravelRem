@@ -193,6 +193,7 @@ class RequestsController extends Controller
         // Получаем данные кабинета, сотрудника и инвентаря
         $cabinet = DB::table('cabinets')->where('id', $request->cabinet_id)->first();
         $employe = DB::table('employes')->where('id', $request->employe_id)->first();
+        $recieve =  DB::table('employes')->where('id', $request->recieve_id)->first();
         $inventory = DB::table('inventories')->where('id', $request->inv_id)->first();
         $image=$request->image;
         // Получаем данные о компонентах заявки
@@ -209,7 +210,7 @@ class RequestsController extends Controller
             'cabinet_name' => $cabinet ? $cabinet->name : null,
             'employe_id' => $employe ? $employe->id : null,
             'employe_name' => $employe ? $employe->full_name : null,
-            'employe_received' => $employe ? $employe->full_name : null,
+            'employe_received' => $recieve ? $recieve->full_name : null,
             'problemDescription' => $request->problemDescription,
             'inv_id' => $inventory ? $inventory->id : null,
             'image'=> $request->image,

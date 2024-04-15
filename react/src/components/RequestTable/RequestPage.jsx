@@ -103,7 +103,7 @@ const RequestPage = () => {
     <p class="text-gray-50 py-2">
  Изображение:
  <a href={"http://remont.by/uploads/repair_requests/"+request.image} target="_blank" rel="noopener noreferrer">
- <img class="w-[200px] h-50" src={"http://remont.by/uploads/repair_requests/"+request.image} alt="Изображения нету" />
+ <img class="w-[30px] h-50" src={"http://remont.by/uploads/repair_requests/"+request.image} alt="Изображения нету" />
 </a>
 </p>
     {request.inv_id!=null?(

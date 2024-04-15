@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class RepairRequest extends Model
 {
     use HasFactory;
+    protected $fillable = ['inv_id'];
     public function employe()
     {
         return $this->belongsTo(Employe::class)->withDefault([
@@ -16,7 +17,7 @@ class RepairRequest extends Model
     }
     public function partsInRequest()
     {
-        return $this->hasMany(PartInRequest::class, 'part_id'); // Specify the foreign key column
+        return $this->hasMany(PartInRequest::class, 'request_id'); // Specify the foreign key column
     }
     public function employeRecieved()
     {
@@ -27,7 +28,7 @@ class RepairRequest extends Model
     public function getPartsNames()
     {
         // Получаем все комплектующие, связанные с текущей заявкой на ремонт
-        $parts = $this->partsInRequest()->with('part')->get();
+        $parts = $this->partsInRequest()->get();
     
         // Создаем массив для хранения информации о комплектующих
         $partsInfo = [];
@@ -36,7 +37,6 @@ class RepairRequest extends Model
         foreach ($parts as $part) {
             // Добавляем в массив всю информацию о комплектующем
             $partsInfo[] = [
-          
                 'name' => $part->part->part, // Предполагается, что 'part' - это наименование комплектующего
                 'count' => $part->count, 
                 'price'=>$part->part->price,

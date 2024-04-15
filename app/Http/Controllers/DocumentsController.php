@@ -66,56 +66,62 @@ class DocumentsController extends Controller
     {
         $date = $request->toArray()['date'];
         $fileName = 'repair_requests_' . $date . '.xlsx';
-
+    
         // Создание и сохранение файла
         Excel::store(new class($date) implements FromCollection, WithHeadings, WithMapping, WithColumnWidths {
             protected $date;
-
+    
             public function __construct($date)
             {
                 $this->date = $date;
             }
-
+    
             public function collection()
             {
-                return RepairRequest::whereDate('doned', $this->date)->get();
+                // Убедитесь, что все необходимые отношения загружены
+                return RepairRequest::with(['inventory', 'cabinet', 'employe'])
+                                    ->whereDate('doned', $this->date)
+                                    ->get();
             }
-
+    
             public function headings(): array
             {
                 return [
                     'Номер',
                     'Создана',
                     'Выполнена',
-                    'Инвентарный номер',
+                    'Инвентарный номер/Инвентарь',
                     '№_Кабинет',
                     'ФИО Отправителя',
                     'Фио ремонтника',
                     'Описание проблемы',
                     'Статус',
-      
                 ];
             }
-
+    
             public function map($repairRequest): array
             {
-                $inventory = $repairRequest->inv_id == 0 ? $repairRequest->inventoryName : $repairRequest->inventory->name;
-                $cabinet=$repairRequest->cabinet_id."_".$repairRequest->cabinet->name;
-                $sender=Employe::find($repairRequest->employe_id);
-                $recieve=Employe::find($repairRequest->recieve_id);
+                // Проверка на null для избежания ошибки
+                $inv_id=$repairRequest->inv_id;
+                $inv_name= $repairRequest->inv_id == null ? $repairRequest->inventoryName :($inv=Inventory::find($repairRequest->id));
+                $inventory = $repairRequest->inv_id == null ? $repairRequest->inventoryName : $inv_name->id.'_'.$inv_name->name;
+                $cabinet = $repairRequest->cabinet ? $repairRequest->cabinet_id . "_" . $repairRequest->cabinet->name : '';
+                $sender = $repairRequest->employe ? $repairRequest->employe->full_name : '';
+                $recieve = $repairRequest->recieve_id ? Employe::find($repairRequest->recieve_id)->full_name : '';
+    
                 return [
                     $repairRequest->id,
                     $repairRequest->created,
                     $repairRequest->doned,
                     $inventory,
                     $cabinet,
-                    $sender->full_name,
-                    $recieve->full_name,
+                    $sender,
+                    $recieve,
                     $repairRequest->problemDescription,
                     $repairRequest->status,
-
                 ];
             }
+    
             public function columnWidths(): array
             {
                 return [
@@ -132,7 +138,7 @@ class DocumentsController extends Controller
                 ];
             }
         }, $fileName, 'public');
-
+    
         // Скачивание файла и его удаление после скачивания
         $filePath = storage_path('app/public/' . $fileName);
         return response()->download($filePath)->deleteFileAfterSend(true);
@@ -176,15 +182,15 @@ class DocumentsController extends Controller
         $table = $section->addTable($styleCell);
         $i=1;
         $total=0;
-        $templateProcessor->setValue('inventory',$inventory);
+        $templateProcessor->setValue('inventory',$inventory->name);
         foreach ($parts[0]['parts:'] as $part) {
             $table->addRow(200);
             $table->addCell(420, $styleCell)->addText($i, $styleText);
-            $table->addCell(2800, $styleCell)->addText($part['name'], $styleText);
+            $table->addCell(2740, $styleCell)->addText($part['name'], $styleText);
             $table->addCell(1740, $styleCell)->addText($part['count'], $styleText);
             $table->addCell(1740, $styleCell)->addText("шт.", $styleText);
-            $table->addCell(1380, $styleCell)->addText($part['price'], $styleText);
-            $table->addCell(1670, $styleCell)->addText($part['sum'], $styleText);
+            $table->addCell(1360, $styleCell)->addText($part['price'], $styleText);
+            $table->addCell(1650, $styleCell)->addText($part['sum'], $styleText);
             $total += ($part['price'] * $part['count']);
             $i++;
         }
@@ -200,5 +206,6 @@ class DocumentsController extends Controller
          $templateProcessor->saveAs($newFileName.'.docx');
          $headers = ['Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
         return response()->download(public_path($newFileName.'.docx'), $newFileName.'.docx', $headers)->deleteFileAfterSend(true);
+
     }
 }

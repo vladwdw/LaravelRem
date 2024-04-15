@@ -1,0 +1,17 @@
+DELIMITER //
+CREATE TRIGGER check_repair_limit BEFORE INSERT ON repair_requests
+FOR EACH ROW
+BEGIN
+    DECLARE repair_count INT;
+    SELECT COUNT(*) INTO repair_count
+    FROM repair_requests
+    WHERE recieve_id = NEW.recieve_id
+    AND DATE(created) = CURDATE()
+    AND status = 'Выполнен';
+
+    IF repair_count >= 10 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Сотрудник уже выполнил 10 ремонтов за текущий день';
+    END IF;
+END;//
+DELIMITER ;
