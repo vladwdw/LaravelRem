@@ -39,7 +39,10 @@ const TableItem = ({inventory,onDelete, type=null}) => {
     
 <ActionsDropdown isVisible={isDropdownVisible} onDelete={onDelete} inventory={inventory}></ActionsDropdown>
 
-            </td>):null
+            </td>):
+              <td class="px-6 py-4">
+                {inventory.repairs_count}
+          </td>
 }
         </tr>
     );

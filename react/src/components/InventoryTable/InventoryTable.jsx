@@ -129,7 +129,11 @@ const InventoryTable = ({ searchValue, type=null }) => {
                             {type==null?(
                             <th scope="col" class="px-6 py-3 no-select">
                                 Действия
-                            </th>):null
+                            </th>):
+                     
+                            <th scope="col" class="px-6 py-3">Количество ремонтов</th>
+                                                       
+                                                            
                             }   
                         </tr>
                     </thead>

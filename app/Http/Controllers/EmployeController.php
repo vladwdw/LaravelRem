@@ -46,7 +46,7 @@ class EmployeController extends Controller
         ->where('status', 'Выполнен')
         ->groupBy('recieve_id')
         ->orderBy('repairs_count', 'desc')
-        ->limit(5) // Получаем топ-5 сотрудников
+        ->limit(5)
         ->get();
 
     // Получаем данные сотрудников

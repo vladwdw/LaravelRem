@@ -3,6 +3,9 @@ import { TabItem } from 'flowbite-react';
 import TableItem from './TableItem';
 import React, { useState, useEffect } from 'react';
 import UserPagination from './UserPagination';
+import ErrorNotification from '../ErrorNotification';
+import SuccesNotification from '../SuccessNotification';
+
 const UserTable = ({searchValue=null, type=null, user=null}) => {
 
     const [data, setData] = useState([]);
@@ -10,7 +13,7 @@ const UserTable = ({searchValue=null, type=null, user=null}) => {
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10; // Adjust this value based on your requirements
-
+    const [notification, setNotification] = useState({ message: '', type: '' });
 
 
 
@@ -18,7 +21,15 @@ const UserTable = ({searchValue=null, type=null, user=null}) => {
         const updatedUsers = data.filter(user => user.id !== id);
         setFilteredData(updatedUsers);
      };
-
+     const showSuccess = (message) => {
+        setNotification({ message, type: 'success' });
+      };
+      const clearNotification = () =>{
+        setNotification({ message: '', type: '' });
+      }
+      const showError = (message) => {
+        setNotification({ message, type: 'error' });
+      };
 
      useEffect(() => {
         if(type==null){
@@ -28,6 +39,7 @@ const UserTable = ({searchValue=null, type=null, user=null}) => {
                 setData(response.data.data);
                 setPagination(response.data);
                 filterData(response.data.data);
+            
             } catch (error) {
                 console.error('Произошла ошибка при получении данных:', error);
             }
@@ -37,6 +49,7 @@ const UserTable = ({searchValue=null, type=null, user=null}) => {
     if(type=="top"){
         
         setData(user);
+        showSuccess("Данные получены успешно")
         filterData(user);
         
         
@@ -102,6 +115,16 @@ const UserTable = ({searchValue=null, type=null, user=null}) => {
                         ))}
                     </tbody>
                 </table>
+                {notification.message && notification.type=="error" &&(
+      <div class="fixed z-100 right-2 bottom-0">
+      <ErrorNotification message={notification.message} clearNotification={clearNotification}></ErrorNotification>
+      </div>
+      )}
+                              {notification.message && notification.type=="success" &&(
+    <div class="fixed z-100 right-5 bottom-0">
+    <SuccesNotification message={notification.message} clearNotification={clearNotification} ></SuccesNotification>
+    </div>
+      )}
             </div>
             {type==null?(
             <UserPagination

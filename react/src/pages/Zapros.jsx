@@ -10,6 +10,8 @@ import ChartComponent from "../components/Query1/ChartComponent";
 import UserTable from "../components/UserTable/UserTable";
 import { useThemeMode } from "flowbite-react";
 import { useEffect } from "react";
+import SuccesNotification from "../components/SuccessNotification";
+import ErrorNotification from "../components/ErrorNotification";
 import axios from "axios";
 const Zapros = () => {
     const [isOpen,setOpen]=useState(false)
@@ -19,6 +21,7 @@ const Zapros = () => {
     const [user,setUser]=useState();
     const [type,setType]=useState("field");
     const [cabinets, setCabinets] = useState([]);
+    const [notification, setNotification] = useState({ message: '', type: '' });
     const handleSearch = (event) => {
         setSearchValue(event.target.value);
      };
@@ -26,6 +29,15 @@ const Zapros = () => {
     const openModal=()=>{
         setOpen(!isOpen);
     }
+    const showSuccess = (message) => {
+        setNotification({ message, type: 'success' });
+      };
+      const clearNotification = () =>{
+        setNotification({ message: '', type: '' });
+      }
+      const showError = (message) => {
+        setNotification({ message, type: 'error' });
+      };
     const getData = () => {
   
         const fetchData = async () => {
@@ -38,8 +50,10 @@ const Zapros = () => {
                   });
                 setUser(response.data);
                 setType("top");
+                showSuccess("Данные получены успешно");
             } catch (error) {
                 console.error('Произошла ошибка при получении данных:', error);
+                showError("Произошла ошибка");
             }
         };
         fetchData();
@@ -164,6 +178,16 @@ const Zapros = () => {
     <div class="mt-[100rem]">
     <Footer></Footer>
     </div>
+    {notification.message && notification.type=="error" &&(
+      <div class="fixed z-100 right-2 bottom-0">
+      <ErrorNotification message={notification.message} clearNotification={clearNotification}></ErrorNotification>
+      </div>
+      )}
+                              {notification.message && notification.type=="success" &&(
+    <div class="fixed z-100 right-5 bottom-0">
+    <SuccesNotification message={notification.message} clearNotification={clearNotification} ></SuccesNotification>
+    </div>
+      )}
         </body>
 
     </html>

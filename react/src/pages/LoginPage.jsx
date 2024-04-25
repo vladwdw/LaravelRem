@@ -3,15 +3,25 @@ import NavMenu from "../components/NavMenu";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import ErrorNotification from "../components/ErrorNotification";
+import SuccesNotification from "../components/SuccessNotification";
 
 const LoginPage = () => {
     const navigate = useNavigate(); 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
+    const [notification, setNotification] = useState({ message: '', type: '' });
     const [errorMessage, setErrorMessage] = useState('');
  
-
+    const showSuccess = (message) => {
+        setNotification({ message, type: 'success' });
+      };
+      const clearNotification = () =>{
+        setNotification({ message: '', type: '' });
+      }
+      const showError = (message) => {
+        setNotification({ message, type: 'error' });
+      };
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -24,13 +34,14 @@ const LoginPage = () => {
             localStorage.setItem('auth',true);
             localStorage.setItem('full_name',response.data.full_name)
             localStorage.setItem('id',response.data.id)
-
+            showSuccess("Авторизация произошла успешно");
             // Вызываем метод login из AuthContext с полученным токеном
             navigate('/cabinet');
 
             // Перенаправление пользователя на главную страницу или другой маршрут
         } catch (error) {
             setErrorMessage('Неверные учетные данные');
+            showError("Неверные учетные данные");
         }
     };
 
@@ -79,6 +90,16 @@ const LoginPage = () => {
     
                     </div>
                 </div>
+                {notification.message && notification.type=="error" &&(
+      <div class="fixed z-100 right-2 bottom-0">
+      <ErrorNotification message={notification.message} clearNotification={clearNotification}></ErrorNotification>
+      </div>
+      )}
+                              {notification.message && notification.type=="success" &&(
+    <div class="fixed z-100 right-5 bottom-0">
+    <SuccesNotification message={notification.message} clearNotification={clearNotification} ></SuccesNotification>
+    </div>
+      )}
             </div>
           </section>
     </body>
