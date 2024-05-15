@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import UserPagination from './UserPagination';
 import ErrorNotification from '../ErrorNotification';
 import SuccesNotification from '../SuccessNotification';
+import '../../App.css';
 
 const UserTable = ({searchValue=null, type=null, user=null}) => {
 
@@ -15,7 +16,7 @@ const UserTable = ({searchValue=null, type=null, user=null}) => {
     const itemsPerPage = 10; // Adjust this value based on your requirements
     const [notification, setNotification] = useState({ message: '', type: '' });
 
-
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     const handleDelete = (id) => {
         const updatedUsers = data.filter(user => user.id !== id);
@@ -76,7 +77,10 @@ const UserTable = ({searchValue=null, type=null, user=null}) => {
         setCurrentPage(1); // Reset to the first page after filtering
         
     };
-
+    useEffect(() => {
+        const sortedData = sortData(filteredData, sortConfig); // Sort the filtered inventory
+        setFilteredData(sortedData);
+    }, [filteredData, sortConfig]);
     useEffect(() => {
         filterData(data);
     }, [searchValue, data]);
@@ -85,6 +89,31 @@ const UserTable = ({searchValue=null, type=null, user=null}) => {
         setCurrentPage(page);
     };
 
+    const sortData = (data, config) => {
+        if (!config.key) {
+            return data;
+        }
+
+        const sortedData = [...data].sort((a, b) => {
+            if (a[config.key] < b[config.key]) {
+                return config.direction === 'ascending' ? -1 : 1;
+            }
+            if (a[config.key] > b[config.key]) {
+                return config.direction === 'ascending' ? 1 : -1;
+            }
+            return 0;
+        });
+
+        return sortedData;
+    };
+
+    const requestSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -98,13 +127,13 @@ const UserTable = ({searchValue=null, type=null, user=null}) => {
                             <th scope="col" class="p-4">
                                 <div class="flex items-center"></div>
                             </th>
-                            <th scope="col" class="px-6 py-3">Имя пользователя</th>
-                            <th scope="col" class="px-4 py-3">ФИО</th>
-                            <th scope="col" class="px-6 py-3">Должность</th>
+                            <th scope="col" class="px-6 py-3 no-select"  onClick={() => requestSort('username')} >Имя пользователя</th>
+                            <th scope="col" class="px-4 py-3 no-select" onClick={() => requestSort('full_name')}>ФИО</th>
+                            <th scope="col" class="px-6 py-3 no-select" onClick={() => requestSort('position')}>Должность</th>
                             {type==null?(
                             <th scope="col" class="px-6 py-3">Действия</th>
                             ): type=="top"?(
-                                <th scope="col" class="px-6 py-3">Количество ремонтов</th>
+                                <th scope="col" class="px-6 py-3 no-select">Количество ремонтов</th>
                             ):null
                             }
                         </tr>

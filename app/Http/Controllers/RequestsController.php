@@ -77,8 +77,16 @@ class RequestsController extends Controller
 
             }
             catch(\Exception $ex){
-                return response()->json(['message'=>'Internal server error',$ex->getMessage()],500);
+              
+                if ($ex->getCode() == '45000') {
+                    // Возвращаем сообщение из триггера
+                    return response()->json(['message' => 'Вы уже выполнили 10 ремонтов за день'],500);
+                }
+                else{
+                return response()->json(['message'=>$ex->getCode()],500);
+                }
             }
+            
     }
     public function update(Request $request, $id)
     {
@@ -170,13 +178,19 @@ class RequestsController extends Controller
                     DB::rollBack();
                     throw new \Exception("Произошла ошибка");
                 }
-            } else {
+            } 
+            else {
                 DB::rollBack();
-                throw new \Exception("Произошла ошибка");
+                return response()->json(['message'=>'Невозможно изменить статус заявки'],400); 
+           
             }
         } catch (\Exception $ex) {
             DB::rollBack();
-            return response()->json(['message' => 'Ошибка: ' . $ex->getMessage()], 500);
+            if ($ex->getCode() == '45000') {
+                // Возвращаем сообщение из триггера
+                return response()->json(['message' => 'Время между созданием заявки и выполнением должно быть не менее 10 минут'],500);
+            }
+            return response()->json(['message' => 'Произошла ошибка'],500);
         }
     }
     
@@ -207,6 +221,7 @@ class RequestsController extends Controller
         $allData = [
             'id' => $request->id,
             'cabinet_id' => $cabinet ? $cabinet->id : null,
+            'created' => $request->created_at,
             'cabinet_name' => $cabinet ? $cabinet->name : null,
             'employe_id' => $employe ? $employe->id : null,
             'employe_name' => $employe ? $employe->full_name : null,

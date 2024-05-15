@@ -68,6 +68,7 @@ class InventoriesController extends Controller
             'e2.full_name as receiver'
         )
         ->where('rr.inv_id', $inventoryId)
+        ->where('rr.status','Выполнен')
         ->orderBy('rr.created', 'desc')
         ->get();
     

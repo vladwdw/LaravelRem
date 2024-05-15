@@ -103,7 +103,7 @@ const OrderPage = () => {
     let totalCost = 0;
     if (order.parts && order.parts.length > 0) {
       order.parts.forEach(part => {
-        totalCost += part.price * part.count;
+        totalCost += Number(part.price) * Number(part.Buy_count);
       });
     }
     return totalCost;

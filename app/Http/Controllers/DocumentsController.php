@@ -80,7 +80,7 @@ class DocumentsController extends Controller
             {
                 // Убедитесь, что все необходимые отношения загружены
                 return RepairRequest::with(['inventory', 'cabinet', 'employe'])
-                                    ->whereDate('doned', $this->date)
+                                    ->whereDate('created_at', $this->date)
                                     ->get();
             }
     
@@ -102,9 +102,9 @@ class DocumentsController extends Controller
             public function map($repairRequest): array
             {
                 // Проверка на null для избежания ошибки
-                $inv_id=$repairRequest->inv_id;
-                $inv_name= $repairRequest->inv_id == null ? $repairRequest->inventoryName :($inv=Inventory::find($repairRequest->id));
-                $inventory = $repairRequest->inv_id == null ? $repairRequest->inventoryName : $inv_name->id.'_'.$inv_name->name;
+                $inv=  $repairRequest->inv_id == null ? $repairRequest->inventoryName:Inventory::find($repairRequest->inv_id);
+                $inv_name= $repairRequest->inv_id == null ? $repairRequest->inventoryName : $inv->id.'_'.$inv->name;
+                $inventory = $repairRequest->inv_id == null ? $repairRequest->inventoryName : $inv_name;
                 $cabinet = $repairRequest->cabinet ? $repairRequest->cabinet_id . "_" . $repairRequest->cabinet->name : '';
                 $sender = $repairRequest->employe ? $repairRequest->employe->full_name : '';
                 $recieve = $repairRequest->recieve_id ? Employe::find($repairRequest->recieve_id)->full_name : '';
@@ -156,6 +156,7 @@ class DocumentsController extends Controller
         }
         else {
             $inventory=$repair->inventoryName;
+            $inv=$inventory;
         }
 
         $templateProcessor= new TemplateProcessor('templates\remont.docx');
@@ -182,7 +183,10 @@ class DocumentsController extends Controller
         $table = $section->addTable($styleCell);
         $i=1;
         $total=0;
-        $templateProcessor->setValue('inventory',$inventory->name);
+      
+        $templateProcessor->setValue('inventory',$inv);
+        
+        $table = $section->addTable($styleCell);
         foreach ($parts[0]['parts:'] as $part) {
             $table->addRow(200);
             $table->addCell(420, $styleCell)->addText($i, $styleText);
@@ -199,6 +203,7 @@ class DocumentsController extends Controller
         }
   
         $templateProcessor->setComplexBlock('table',$table);
+    
         $templateProcessor->setValue('total',$total);
         $templateProcessor->setValue('day', date('d', strtotime($repair->doned)) );
         $templateProcessor->setValue('year', date('y', strtotime($repair->doned)) );

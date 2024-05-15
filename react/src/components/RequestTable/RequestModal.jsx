@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import SuccesNotification from "../SuccessNotification";
 import ErrorNotification from "../ErrorNotification";
+import { exec } from "apexcharts";
 
 const RequestModal = ({ isOpen, onClose, request}) => {
     const [parts, setParts] = useState([]); 
@@ -10,6 +11,7 @@ const RequestModal = ({ isOpen, onClose, request}) => {
     const [notification, setNotification] = useState({ message: '', type: '' });
     const [fields, setFields] = useState([{}]);
     const [visible,setVisible]=useState(false);
+    const [errorMessage, setErrorMessage]=useState([]);
     const handleAddField = () => {
         setFields([...fields, { id: fields.length + 1, part: parts[0].part, count: parts[0].count , price:''}]);
     };
@@ -106,13 +108,17 @@ const RequestModal = ({ isOpen, onClose, request}) => {
                 recieve_id: localStorage.getItem('id'),
                 fields
             });
-    
+
             showSuccess('Данные успешно обновлены');
-   
+            window.location.reload();
     
         } catch (error) {
-            console.error('Error updating Request', error);
-            showError('Произошла ошибка');
+            if (error.response) {
+      
+                showError(error.response.data.message);
+                return ;
+            }
+
         }
     };
     if (!isOpen) return null;

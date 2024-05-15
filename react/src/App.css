@@ -3,7 +3,13 @@ html, body {
     height: 100%;
     
 }
-
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000; 
+    border: none;/* Убедитесь, что уведомления отображаются поверх других элементов */
+  }
 .no-select {
     user-select: none;
     -webkit-user-select: none; /* For Safari and Chrome */

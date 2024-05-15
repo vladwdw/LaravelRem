@@ -92,6 +92,9 @@ const RequestPage = () => {
       Автор: {request.employe_name}
     </p>
     <p class="text-gray-50 py-2">
+      Дата создания: {request.created}
+    </p>
+    <p class="text-gray-50 py-2">
       Принял заявку: {request.employe_received}
     </p>
     <p class="text-gray-50 py-2">
@@ -103,7 +106,7 @@ const RequestPage = () => {
     <p class="text-gray-50 py-2">
  Изображение:
  <a href={"http://remont.by/uploads/repair_requests/"+request.image} target="_blank" rel="noopener noreferrer">
- <img class="w-[30px] h-50" src={"http://remont.by/uploads/repair_requests/"+request.image} alt="Изображения нету" />
+ <img class="w-[100px] max-h-[200px]" src={"http://remont.by/uploads/repair_requests/"+request.image} alt="Изображения нету" />
 </a>
 </p>
     {request.inv_id!=null?(

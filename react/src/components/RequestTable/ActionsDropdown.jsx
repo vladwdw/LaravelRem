@@ -2,9 +2,24 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate} from "react-router-dom"; 
 import RequestModal from "./RequestModal";
+import SuccesNotification from "../SuccessNotification";
+import ErrorNotification from "../ErrorNotification";
+import '../../App.css';
+
 const ActionsDropdown = ({isVisible,request,onDelete=null, type=null}) => {
     const navigate = useNavigate();
     const[stateModal,setModal]=useState(false);
+    const [notification, setNotification] = useState({ message: '', type: '' });
+    const showSuccess = (message) => {
+        setNotification({ message, type: 'success' });
+     };
+
+     const showError = (message) => {
+        setNotification({ message, type: 'error' });
+     };
+     const clearNotification = () =>{
+        setNotification({ message: '', type: '' });
+    }
     const respondRequest= async (id) => {
         
         try {
@@ -13,10 +28,14 @@ const ActionsDropdown = ({isVisible,request,onDelete=null, type=null}) => {
             });
             
             console.log(response.data);
+            window.location.reload();
+     
+        } catch (error) { 
+                if (error.response) {
+          
+                    showError(error.response.data.message);
+                }
 
-            window.location.reload(); 
-        } catch (error) {
-            console.error('Ошибка:', error);
         }
     };
     const AcceptRequest= async (id) => {
@@ -82,7 +101,8 @@ const ActionsDropdown = ({isVisible,request,onDelete=null, type=null}) => {
 
         navigate(`/request/${request.id}`); 
        }
-       const handleRespondClick=()=>{
+       const handleRespondClick= async (event)=>{
+
         respondRequest(request.id);
        }
        const handleAccept=()=>{
@@ -114,11 +134,24 @@ const ActionsDropdown = ({isVisible,request,onDelete=null, type=null}) => {
                         }
                         <li><a href="#" onClick={handleViewClick} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Посмотреть</a></li>
                     </ul>
+                    {notification.message && notification.type=="error" &&(
+                        <div class="notification">
+      <ErrorNotification message={notification.message} clearNotification={clearNotification}></ErrorNotification>
+      </div>
+      )}
+                              {notification.message && notification.type=="success" &&(
+                                    <div class="notification">
+    <SuccesNotification message={notification.message} clearNotification={clearNotification} ></SuccesNotification>
+    </div>
+      )}
                   <RequestModal isOpen={stateModal} onClose={openModal} request={request}></RequestModal>
+
                 </div>
+                
+                
              
             ): null}
-           
+
         </>
     );
 }

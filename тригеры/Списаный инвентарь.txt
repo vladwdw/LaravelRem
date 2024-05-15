@@ -8,17 +8,25 @@ STARTS CURRENT_DATE
 ON COMPLETION NOT PRESERVE ENABLE
 DO
 BEGIN
+    -- Создание временной таблицы для хранения идентификаторов записей
+    CREATE TEMPORARY TABLE IF NOT EXISTS temp_ids AS
+    SELECT id
+    FROM inventories
+    WHERE spisDate <= CURDATE() AND status = 'Доступен';
+
     -- Обновление статуса в таблице inventories
     UPDATE inventories
-    SET status = 'Списан'
-    WHERE spisDate = CURDATE();
+    INNER JOIN temp_ids ON inventories.id = temp_ids.id
+    SET status = 'Списан';
 
     -- Вставка данных в таблицу spis_invs
     INSERT INTO spis_invs (reason, inv_id)
     SELECT 'Срок подошел к концу', id
-    FROM inventories
-    WHERE spisDate = CURDATE();
-END$$
+    FROM temp_ids;
+
+    -- Очистка временной таблицы
+    DROP TEMPORARY TABLE IF EXISTS temp_ids;
+END
 DELIMITER ;
 
 Тригер:
